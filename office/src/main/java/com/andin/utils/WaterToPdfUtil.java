@@ -31,12 +31,6 @@ public class WaterToPdfUtil {
 	public static final boolean IS_LEVEL_PDF = false;
 	/* --- 水印的文件颜色 ---  */
 	public static final BaseColor WATER_COLOR = BaseColor.GRAY;
-
-	
-	public static void main(String[] args) {
-		WaterModel water = new WaterModel("jim", "jack", "", "中国移动云南分公司曲靖分公司", "YN123456");
-		pdfToWater("c:/app/test.pdf", "c:/app/target.pdf", water);
-	}
 	
     /**
           * 给PDF文件添加水印
