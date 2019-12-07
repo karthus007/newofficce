@@ -66,7 +66,6 @@ public class OfficeController {
 			String pass = req.getParameter("pass") != null ? req.getParameter("pass") : "";
 			String head = req.getParameter("head") != null ? req.getParameter("head") : "";
 			String handler = req.getParameter("handler") != null ? req.getParameter("handler") : "";
-
 			WaterModel water = new WaterModel(handler, head, pass, com, id);
 			StringBuffer path = new StringBuffer();
 			path.append(StringUtil.getUploadFilePath());
@@ -75,6 +74,7 @@ public class OfficeController {
 			String lastFileName = fileName.substring(0, index);
 			String outputFilePath = null;
 			String officeInputFilePath = null;
+			logger.debug("OfficeController.pdfToWater fileName is: " + fileName);
 			if(fileName.endsWith(ConstantUtil.PDF)) {
 				path.append(ConstantUtil.PDF_PDF_PATH);
 				outputFilePath = path.toString() + ConstantUtil.WATER_PATH + fileName;

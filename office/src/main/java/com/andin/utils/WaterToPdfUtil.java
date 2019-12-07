@@ -40,6 +40,7 @@ public class WaterToPdfUtil {
      * @return
      */
     public static boolean pdfToWater(String inputFilePath, String outputFilePath, WaterModel water){
+		logger.debug("WaterToPdfUtil.pdfToWater method is start, water is: " + water.toString()); 
     	boolean result = false;
     	try{
     	    String WATER_COM = water.getCom();
