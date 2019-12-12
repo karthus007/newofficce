@@ -141,7 +141,7 @@ public class ConstantUtil {
 	
 	public static final String WATER_FONT_PATH = "water/simhei.ttf";
 	
-	public static final String WATER_IMAGE_PATH = "water/test.jpg";
+	public static final String WATER_IMAGE_PATH = "water/logo.png";
 	
 	/********************* license信息  *********************/
 	
