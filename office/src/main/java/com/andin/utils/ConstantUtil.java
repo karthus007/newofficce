@@ -95,6 +95,10 @@ public class ConstantUtil {
 	
 	/********************* 上传文件路径常量 *********************/
 	
+	public static final String JPG = ".jpg";
+	
+	public static final String PNG = ".png";
+	
 	public static final String ZIP = ".zip";
 	
 	public static final String HTML = ".html";

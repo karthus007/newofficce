@@ -23,27 +23,27 @@ public class FileUtil {
 	
 	private static Logger logger = LoggerFactory.getLogger(FileUtil.class);
 
-	private final static String HTML_XLSX_PATH = StringUtil.getUploadFilePath() + ConstantUtil.HTML_XLSX_PATH;
+	private final static String PDF_XLSX_PATH = StringUtil.getUploadFilePath() + ConstantUtil.PDF_XLSX_PATH;
 		
 	/**
 	 * 获取包含文件名的不带后缀的文件名列表
 	 * @param fileName
 	 * @return
 	 */
-	private static List<String> getXlsxHtmlFileNameList(String fileName) throws Exception{
-		logger.debug("FileUtil.getXlsxHtmlFileNameList 需匹配的文件名为：" + fileName);
+	private static List<String> getXlsxImageFileNameList(String fileName) throws Exception{
+		logger.debug("FileUtil.getXlsxImageFileNameList 需匹配的文件名为：" + fileName  + "-");
 		List<String> list = new ArrayList<String>();
 		//获取html/xlsx/文件夹下的文件名列表
-		File dir = new File(HTML_XLSX_PATH);
+		File dir = new File(PDF_XLSX_PATH);
 		File[] files = dir.listFiles();
 		for (int i = 0; i < files.length; i++) {
 			File file = files[i];
 			String name = file.getName();
-			if(name.startsWith(fileName)) {
+			if(name.startsWith(fileName + "-")) {
 				list.add(name);
 			}
 		}
-		logger.debug("FileUtil.getXlsxHtmlFileNameList 匹配到的文件名列表为：" + list.toString());
+		logger.debug("FileUtil.getXlsxImageFileNameList 匹配到的文件名列表为：" + list.toString());
 		return list;
 	}
 	
@@ -53,16 +53,16 @@ public class FileUtil {
 	 * @param zipFileName
 	 * @return
 	 */
-	public static boolean getHtmlFileZipByFileName(String fileName) {
-		logger.debug("FileUtil.getHtmlFileZipByFileName method executed is start, file name is: " + fileName);
+	public static boolean getImageFileZipByFileName(String fileName) {
+		logger.debug("FileUtil.getImageFileZipByFileName method executed is start, file name is: " + fileName);
 		boolean result = false;
 		try {
-			List<String> list = getXlsxHtmlFileNameList(fileName);
-			logger.debug("FileUtil.getHtmlFileZipByFileName method get zip file list is: " + list.toString());
-			OutputStream os = new FileOutputStream(HTML_XLSX_PATH + fileName + ConstantUtil.ZIP);
+			List<String> list = getXlsxImageFileNameList(fileName);
+			logger.debug("FileUtil.getImageFileZipByFileName method get zip file list is: " + list.toString());
+			OutputStream os = new FileOutputStream(PDF_XLSX_PATH + fileName + ConstantUtil.ZIP);
 			ZipOutputStream zos = new ZipOutputStream(new BufferedOutputStream(os));
 			for (String name : list) {
-				String fullFileName = HTML_XLSX_PATH + name;
+				String fullFileName = PDF_XLSX_PATH + name;
 				File file = new File(fullFileName);
 				if(file.isDirectory()) {
 					File[] files = file.listFiles();
@@ -94,9 +94,9 @@ public class FileUtil {
 			}
 			zos.close();
 			result = true;
-			logger.debug("FileUtil.getHtmlFileZipByFileName method executed is successful... ");
+			logger.debug("FileUtil.getImageFileZipByFileName method executed is successful... ");
 		} catch (Exception e) {
-			logger.error("FileUtil.getHtmlFileZipByFileName method executed is error: ", e);
+			logger.error("FileUtil.getImageFileZipByFileName method executed is error: ", e);
 		}
 		return result;
 	}
