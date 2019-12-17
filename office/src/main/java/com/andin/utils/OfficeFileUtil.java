@@ -209,7 +209,11 @@ public class OfficeFileUtil {
         PDDocument document = PDDocument.load(file);
         String content = stripper.getText(document).trim();
         //第二页文本小于60则需要切换，大于则不切换
-        if(content.length() < 80) {
+        int length = content.length();
+        if(length < 4) {
+        	document.removePage(1);
+        	document.save(fileNamePath);
+        }else if(length < 80 && length > 4) {
         	document.removePage(0);
         	document.removePage(0);
         	document.save(fileNamePath);
