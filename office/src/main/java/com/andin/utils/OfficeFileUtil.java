@@ -41,9 +41,7 @@ public class OfficeFileUtil {
 	private final static String PDF_XLSX_PATH = StringUtil.getUploadFilePath() + ConstantUtil.PDF_XLSX_PATH;
 	
 	private final static String PDF_PPTX_PATH = StringUtil.getUploadFilePath() + ConstantUtil.PDF_PPTX_PATH;
-	
-	private final static String PDF_TEMP_NAME = "temp";
-	
+		
 	public static boolean officeToPdf(String inputFileName) {
 		boolean result = false;
 		try {
@@ -53,27 +51,11 @@ public class OfficeFileUtil {
 			String fileType = inputFileName.substring(index);
 			if(ConstantUtil.DOCX.equals(fileType) || ConstantUtil.DOC.equals(fileType)) {
 				String outputFileName = PDF_DOCX_PATH + fileName + ConstantUtil.PDF;
-				String tempFileName = PDF_DOCX_PATH + fileName + PDF_TEMP_NAME + ConstantUtil.PDF;
-				//将DOCX文件转换为PDF
-				result = OfficeCmdUtil.officeToPdf(DOCX_PATH + inputFileName, outputFileName);
-				logger.debug("输入文件为：" + inputFileName + ", liboffice -> docx转pdf的结果为：" + result);
+				result = asposeWordAcceptRevisions(DOCX_PATH + inputFileName, DOCX_PATH + inputFileName);
 				if(result) {
-					boolean flag = checkPdfPage(outputFileName);
-					logger.debug("输入文件为：" + outputFileName + ", pdf是否符合要求：" + flag);
-					//符合则返回，不符合则获取PDF第一页，拼接PDF
-					if(flag) {
-						result = flag;
-					}else {
-						boolean temp = splitPdfPage(DOCX_PATH + inputFileName, tempFileName);
-						logger.debug("输入文件为：" + inputFileName + ", 获取PDF第一页结果为：" + temp);
-						if(temp) {
-							//拼接PDF
-							result = mergePdfPage(tempFileName, outputFileName);
-							logger.debug("输入文件为：" + inputFileName + ", pdf拼接的结果为：" + result);
-							//删除PDF第一页临时文件
-							FileUtil.deleteFilePath(tempFileName);
-						}
-					}
+					//将DOCX文件转换为PDF
+					result = OfficeCmdUtil.officeToPdf(DOCX_PATH + inputFileName, outputFileName);
+					logger.debug("输入文件为：" + inputFileName + ", docx转pdf的结果为：" + result);					
 				}
 				FileUtil.deleteFilePath(DOCX_PATH + inputFileName);
 			}else if(ConstantUtil.XLSX.equals(fileType) || ConstantUtil.XLS.equals(fileType)) {
@@ -161,6 +143,31 @@ public class OfficeFileUtil {
 			logger.debug("OfficeFileUtil.asposeExcelToImage method executed is successful, output file path is: " + outputFileName);
 		}  catch (Exception e) {
 			logger.error("OfficeFileUtil.asposeExcelToImage method executed is error: ", e);
+		}
+        return result;
+	}
+	
+	/**
+	 * word文档接收修订
+	 * @param inputFileName
+	 * @param outputFileName
+	 * @throws Exception
+	 */
+	private static boolean asposeWordAcceptRevisions(String inputFileName, String outputFileName){
+		boolean result = false;
+		try {
+			byte[] bytes = ConstantUtil.ASPOSE_WORD_LICENSE.getBytes("UTF-8");
+			InputStream in =  new ByteArrayInputStream(bytes);
+			com.aspose.words.License asposeLic = new com.aspose.words.License();
+			asposeLic.setLicense(in);
+			Document convertDoc = new Document(inputFileName);
+			convertDoc.acceptAllRevisions();
+			convertDoc.save(outputFileName);
+			in.close();
+			result = true;
+			logger.debug("OfficeFileUtil.asposeWordAcceptRevisions method executed is successful, output file path is: " + outputFileName);
+		}  catch (Exception e) {
+			logger.error("OfficeFileUtil.asposeWordAcceptRevisions method executed is error: ", e);
 		}
         return result;
 	}
