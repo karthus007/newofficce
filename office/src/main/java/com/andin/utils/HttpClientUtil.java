@@ -33,6 +33,8 @@ public class HttpClientUtil {
     
 	private static final String OFFICE_HTTP_URI = PropertiesUtil.getProperties("office.uri", null);
 	
+	private static final String OFFICE_TYPE = PropertiesUtil.getProperties("office.type", null);
+	
 	private static final int HTTP_STATUS_OK = 200;
 	
 	private static final String CONT = "cont";
@@ -168,7 +170,7 @@ public class HttpClientUtil {
 			URI uri = new URIBuilder(OFFICE_HTTP_URI).build();
 			HttpPost post = new HttpPost(uri);
 			post.addHeader(ConstantUtil.CONTENT_TYPE, ConstantUtil.APPLICATION_JSON_UTF_8);
-			String params = "{\"mod\": \"ftranshandle\", \"ac\": \"gettask\"}";
+			String params = "{\"mod\": \"ftranshandle\", \"ac\": \"gettask\", \"type\": \"" + OFFICE_TYPE+ "\"}";
 			logger.debug("HttpClientUtil.getTaskList method executed params is: " + params);
 	        HttpEntity reqEntity = new StringEntity(params);
 			post.setEntity(reqEntity);

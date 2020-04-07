@@ -64,6 +64,19 @@ public class StringUtil {
 	}
 	
 	/**
+	 * 获取系统的类型
+	 * @return
+	 */
+	public static String getSystemType() {
+		String type = ConstantUtil.LINUX;
+		String name = System.getProperty("os.name").toLowerCase();
+		if(name.contains(ConstantUtil.WINDOWS)) {
+			type = ConstantUtil.WINDOWS;
+		}
+		return type;
+	}
+	
+	/**
 	 * 通过文件名获取文件的存储路径
 	 * @param fileName
 	 * @return

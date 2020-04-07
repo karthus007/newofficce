@@ -160,6 +160,14 @@
 		    <systemPath>${basedir}/lib/aspose.slides-15.9.0.jar</systemPath>
 		</dependency>
 		
+		<dependency>
+		    <groupId>com.andin</groupId>
+		    <artifactId>jacob</artifactId>
+		    <version>1.0</version>
+		    <scope>system</scope>
+		    <systemPath>${basedir}/lib/jacob.jar</systemPath>
+		</dependency>
+		
 		<!-- https://mvnrepository.com/artifact/org.apache.pdfbox/pdfbox -->
 		<dependency>
 		    <groupId>org.apache.pdfbox</groupId>

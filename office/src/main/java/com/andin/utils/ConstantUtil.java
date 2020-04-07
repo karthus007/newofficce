@@ -92,6 +92,10 @@ public class ConstantUtil {
 	
 	public static final String FALSE = "false";
 	
+	public static final String WINDOWS = "windows";
+	
+	public static final String LINUX = "linux";
+	
 	
 	/********************* 上传文件路径常量 *********************/
 	

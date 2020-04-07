@@ -8,10 +8,10 @@ package com.andin.utils;
 public class CommonUtil {
 
 	/*--- 权限状态 ---*/
-	public static boolean LICENSE_STATUS = false;
+	public static boolean LICENSE_STATUS = true;
 	
 	static {
-		LICENSE_STATUS = StringUtil.getLicenseStatus();
+		//LICENSE_STATUS = StringUtil.getLicenseStatus();
 	}
 	
 }

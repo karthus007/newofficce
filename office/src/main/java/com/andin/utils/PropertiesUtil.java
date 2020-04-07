@@ -12,7 +12,7 @@ public class PropertiesUtil {
 
 	private static final Logger logger = LoggerFactory.getLogger(PropertiesUtil.class);
 	
-	private static final String APP_CONFIG_PATH = "/app/config/";
+	private static final String APP_CONFIG_PATH = "d:/app/config/";
 	
 	private static final String CONFIG_FILE_PATH = "config.properties";
 	
