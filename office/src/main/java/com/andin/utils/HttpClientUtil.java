@@ -170,7 +170,7 @@ public class HttpClientUtil {
 			URI uri = new URIBuilder(OFFICE_HTTP_URI).build();
 			HttpPost post = new HttpPost(uri);
 			post.addHeader(ConstantUtil.CONTENT_TYPE, ConstantUtil.APPLICATION_JSON_UTF_8);
-			String params = "{\"mod\": \"ftranshandle\", \"ac\": \"gettask\", \"type\": \"" + OFFICE_TYPE+ "\"}";
+			String params = "{\"mod\": \"ftranshandle\", \"ac\": \"gettask\", \"type\": \"" + OFFICE_TYPE + "\"}";
 			logger.debug("HttpClientUtil.getTaskList method executed params is: " + params);
 	        HttpEntity reqEntity = new StringEntity(params);
 			post.setEntity(reqEntity);

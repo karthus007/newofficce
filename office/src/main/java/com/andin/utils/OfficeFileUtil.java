@@ -49,21 +49,29 @@ public class OfficeFileUtil {
 	public static boolean officeToPdf(String inputFileName) {
 		boolean result = false;
 		try {
+			int repeatCount = 3;
 			logger.debug("OfficeFileUtil.officeToPdf 转换的文件名为： " + inputFileName);
 			int index = inputFileName.lastIndexOf(".");
 			String fileName = inputFileName.substring(0, index);
 			String fileType = inputFileName.substring(index);
 			if(ConstantUtil.DOCX.equals(fileType) || ConstantUtil.DOC.equals(fileType)) {
 				String outputFileName = PDF_DOCX_PATH + fileName + ConstantUtil.PDF;
-				//存在输出文件则删除
-				FileUtil.deleteFilePath(outputFileName);
-				//获取系统的类型
-				String systemType = StringUtil.getSystemType();
-				if(ConstantUtil.WINDOWS.equals(systemType)) {
-					result = officeWordToPdf(DOCX_PATH + inputFileName, outputFileName);
-				}else {
-					//将DOCX文件转换为PDF
-					result = OfficeCmdUtil.officeToPdf(DOCX_PATH + inputFileName, outputFileName);
+				//将DOCX文件转换为PDF
+				for (int i = 0; i < repeatCount; i++) {
+					//存在输出文件则删除
+					FileUtil.deleteFilePath(outputFileName);
+					//获取系统的类型
+					String systemType = StringUtil.getSystemType();
+					if(ConstantUtil.WINDOWS.equals(systemType)) {
+						result = officeWordToPdf(DOCX_PATH + inputFileName, outputFileName);
+					}else {
+						//将DOCX文件转换为PDF
+						result = OfficeCmdUtil.officeToPdf(DOCX_PATH + inputFileName, outputFileName);
+					}
+					if(result) {
+						break;
+					}
+					logger.debug("OfficeFileUtil.officeToPdf 正在第" + (i + 1) + "次重试转换..., 文件名称为：" + DOCX_PATH + inputFileName);
 				}
 				logger.debug("输入文件为：" + inputFileName + ", docx转pdf的结果为：" + result);
 				FileUtil.deleteFilePath(DOCX_PATH + inputFileName);
