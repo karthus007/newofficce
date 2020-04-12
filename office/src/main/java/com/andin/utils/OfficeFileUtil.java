@@ -227,6 +227,7 @@ public class OfficeFileUtil {
 	 * @return
 	 */
 	public static boolean officeWordToPdf(String inputFileName,String outputFileName){
+		long startTime = System.currentTimeMillis();
 		boolean result = false;
 		try {
 			//打开word应用程序
@@ -248,6 +249,8 @@ public class OfficeFileUtil {
 		}  catch (Exception e) {
 			logger.error("OfficeFileUtil.officeWordToPdf method executed is error: ", e);
 		}
+		long endTime = System.currentTimeMillis();
+	    logger.debug("OfficeFileUtil.officeWordToPdf method executed spend time is: " + (endTime - startTime)/1000 + "s");
 	    return result;
 	}
 	
@@ -258,6 +261,7 @@ public class OfficeFileUtil {
 	 * @return
 	 */
 	public static boolean officeDocToDocx(String inputFileName,String outputFileName){
+		long startTime = System.currentTimeMillis();
 		boolean result = false;
 		try {
 			//打开word应用程序
@@ -279,6 +283,8 @@ public class OfficeFileUtil {
 		}  catch (Exception e) {
 			logger.error("OfficeFileUtil.officeDocToDocx method executed is error: ", e);
 		}
+		long endTime = System.currentTimeMillis();
+	    logger.debug("OfficeFileUtil.officeDocToDocx method executed spend time is: " + (endTime - startTime)/1000 + "s");
 	    return result;
 	}
 	

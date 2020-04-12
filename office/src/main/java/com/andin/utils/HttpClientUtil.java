@@ -51,6 +51,7 @@ public class HttpClientUtil {
 	 * @return
 	 */
 	public static boolean downloadFile(String id, String fileName) {
+		long startTime = System.currentTimeMillis();
 		boolean result = false;
 		CloseableHttpClient client = null;
 		CloseableHttpResponse response = null;
@@ -95,6 +96,8 @@ public class HttpClientUtil {
 			    logger.error("HttpClientUtil.getDownloadFile method close stream is failed: ", e);
 			}				
 		}
+        long endTime = System.currentTimeMillis();
+	    logger.debug("HttpClientUtil.getDownloadFile method executed spend time is: " + (endTime - startTime)/1000 + "s");
         return result;
 	}
 	
@@ -104,6 +107,7 @@ public class HttpClientUtil {
 	 * @return
 	 */
 	public static boolean uploadFile(String id, String filePath) {
+		long startTime = System.currentTimeMillis();
 		boolean result = false;
 		CloseableHttpClient client = null;
 		CloseableHttpResponse response = null;
@@ -154,6 +158,8 @@ public class HttpClientUtil {
 			    logger.error("HttpClientUtil.uploadFile method close stream is failed: ", e);
 			}				
 		}
+        long endTime = System.currentTimeMillis();
+	    logger.debug("HttpClientUtil.uploadFile method executed spend time is: " + (endTime - startTime)/1000 + "s");
         return result;
 	}
 	
@@ -162,6 +168,7 @@ public class HttpClientUtil {
 	 * @return
 	 */
 	public static TaskModel getTask() {
+		long startTime = System.currentTimeMillis();
 		TaskModel task = null;
 		CloseableHttpClient client = null;
 		CloseableHttpResponse response = null;
@@ -201,6 +208,9 @@ public class HttpClientUtil {
 			    logger.error("HttpClientUtil.getTaskList method close stream is failed: ", e);
 			}				
 		}
+        long endTime = System.currentTimeMillis();
+	    logger.debug("HttpClientUtil.getTaskList method executed spend time is: " + (endTime - startTime)/1000 + "s");
+
         return task;
 	}
 	
@@ -211,6 +221,7 @@ public class HttpClientUtil {
 	 * @return
 	 */
 	public static boolean updateTaskStatus(String id) {
+		long startTime = System.currentTimeMillis();
 		boolean result = false;
 		CloseableHttpClient client = null;
 		CloseableHttpResponse response = null;
@@ -250,6 +261,8 @@ public class HttpClientUtil {
 			    logger.error("HttpClientUtil.updateTaskStatus method close stream is failed: ", e);
 			}				
 		}
+        long endTime = System.currentTimeMillis();
+	    logger.debug("HttpClientUtil.updateTaskStatus method executed spend time is: " + (endTime - startTime)/1000 + "s");
         return result;
 	}
 	

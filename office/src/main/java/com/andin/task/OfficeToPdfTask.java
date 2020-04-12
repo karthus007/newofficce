@@ -54,6 +54,7 @@ public class OfficeToPdfTask {
 			//获取任务列表
 			TaskModel task = HttpClientUtil.getTask();
 			if(task != null) {
+				long startTime = System.currentTimeMillis();
 				Boolean downloadResult = false;
 				Boolean officeToPdfResult = false;
 				Boolean uploadResult = false;
@@ -80,7 +81,10 @@ public class OfficeToPdfTask {
 					}
 				}
 				String result = "[downloadResult=" + downloadResult + "], [officeToPdfResult=" + officeToPdfResult + "], [uploadResult=" + uploadResult + "], [updateResult=" + updateResult + "]";
-				logger.debug("OfficeToPdfTask.getOfficeTaskListToPdf method executed task result is: " + result);	
+				logger.debug("OfficeToPdfTask.getOfficeTaskListToPdf method executed task result is: " + result);
+				long endTime = System.currentTimeMillis();
+			    logger.debug("OfficeToPdfTask.getOfficeTaskListToPdf method executed spend time is: " + (endTime - startTime)/1000 + "s");
+			    
 			}
 		}
 		
