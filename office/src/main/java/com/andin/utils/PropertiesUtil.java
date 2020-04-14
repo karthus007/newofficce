@@ -64,7 +64,7 @@ public class PropertiesUtil {
 	}
 
 	public static void main(String[] args) {
-		String key = PropertiesUtil.getProperties("test", null);
+		String key = PropertiesUtil.getProperties("te11st", null);
 		System.out.println(key);
 	}
 

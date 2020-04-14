@@ -2,6 +2,7 @@ package com.andin.task;
 
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
+import java.util.concurrent.ThreadPoolExecutor;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -25,18 +26,21 @@ import com.andin.utils.StringUtil;
 @EnableScheduling
 public class OfficeToPdfTask {
 	
-	private static final String TASK_THREAD_COUNT = PropertiesUtil.getProperties("task.thread.count", null);
+	private static final Integer TASK_THREAD_COUNT = Integer.valueOf(PropertiesUtil.getProperties("task.thread.count", null));
     
 	private static Logger logger = LoggerFactory.getLogger(OfficeToPdfTask.class);
 
-	private static ExecutorService pool = Executors.newFixedThreadPool(Integer.valueOf(TASK_THREAD_COUNT));
+	private static ExecutorService pool = Executors.newFixedThreadPool(TASK_THREAD_COUNT);
 
 	@Scheduled(cron = "*/5 * * * * ?")/** 每五秒触发一次 **/
 	public void getOfficeTaskListToPdf() throws Exception{
 		if(CommonUtil.LICENSE_STATUS) {
 			logger.debug("OfficeToPdfTask.getOfficeTaskListToPdf method executed is start...");
-			TaskThread thread = new TaskThread();
-			pool.execute(thread);	
+			int tcount = ((ThreadPoolExecutor) pool).getActiveCount();
+			if(tcount < TASK_THREAD_COUNT) {
+				TaskThread thread = new TaskThread();
+				pool.execute(thread);	
+			}
 		}else {
 			logger.debug("OfficeToPdfTask.getOfficeTaskListToPdf license is authorization failed...");
 		}

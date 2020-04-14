@@ -289,7 +289,7 @@ public class OfficeFileUtil {
 	}
 	
 	public static void main(String[] args) {
-		officeDocToDocx("d:/app/test.doc", "d:/app/test.docx");
+		//officeDocToDocx("d:/app/test.doc", "d:/app/test.docx");
 		officeWordToPdf("d:/app/test.doc", "d:/app/test.pdf");
 	}
 	

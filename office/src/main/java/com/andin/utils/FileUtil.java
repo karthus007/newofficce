@@ -24,6 +24,10 @@ public class FileUtil {
 	private static Logger logger = LoggerFactory.getLogger(FileUtil.class);
 
 	private final static String PDF_XLSX_PATH = StringUtil.getUploadFilePath() + ConstantUtil.PDF_XLSX_PATH;
+	
+    private static final String FILE_DEBUG = PropertiesUtil.getProperties("file.debug", null);
+    
+    private static final String FILE_DEBUG_PATH = PropertiesUtil.getProperties("file.debug.path", null);
 		
 	/**
 	 * 获取包含文件名的不带后缀的文件名列表
@@ -131,12 +135,54 @@ public class FileUtil {
 	}
 	
 	/**
+	 * 文件复制
+	 * @param inputFilePath
+	 * @param outputFilePath
+	 * @return
+	 */
+	public static boolean copyFilePath(String inputFilePath, String outputFilePath) {
+		boolean result = false;
+		FileInputStream fis = null;
+		FileOutputStream fos = null;
+		try{
+			fis = new FileInputStream(inputFilePath);
+			fos = new FileOutputStream(outputFilePath);
+			byte[] bytes = new byte[1024*10];
+			int len = 0;
+			while((len = fis.read(bytes)) != -1){
+				fos.write(bytes, 0, len);
+			}
+			result = true;
+			logger.debug("FileUtil.copyFilePath file copy is successful, path is: " + outputFilePath);
+		}catch (Exception e){
+			logger.error("FileUtil.copyFilePath method executed is failed: ", e);
+		}finally {
+			try {
+				if(fis != null) {
+					fis.close();
+				}
+				if(fos!=null){
+					fos.close();
+				}
+			} catch (Exception e) {
+			    logger.error("FileUtil.copyFilePath method close stream is failed: ", e);
+			}	
+		}
+		return result;
+	}
+	
+	/**
 	  * 通过文件路径删除文件或文件夹
 	 * @param path
 	 * @return
 	 */
 	public static boolean deleteFilePath(String path) {
 		File file = new File(path);
+		if(ConstantUtil.TRUE.equals(FILE_DEBUG) && file.exists()) {
+			String fileName = file.getName();
+			String copyFilePath = FILE_DEBUG_PATH + "/" + fileName;
+			copyFilePath(path, copyFilePath);
+		}
 		return deleteFile(file);
 	}
 	
