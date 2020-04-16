@@ -26,7 +26,9 @@ import com.aspose.cells.Worksheet;
 import com.aspose.cells.WorksheetCollection;
 import com.aspose.words.Document;
 import com.jacob.activeX.ActiveXComponent;
+import com.jacob.com.ComThread;
 import com.jacob.com.Dispatch;
+import com.jacob.com.Variant;
 
 public class OfficeFileUtil {
 
@@ -229,25 +231,29 @@ public class OfficeFileUtil {
 	public static boolean officeWordToPdf(String inputFileName,String outputFileName){
 		long startTime = System.currentTimeMillis();
 		boolean result = false;
+		ActiveXComponent app = null;
+		Dispatch doc = null;
 		try {
 			//打开word应用程序
-			ActiveXComponent app = new ActiveXComponent("Word.Application");
+			app = new ActiveXComponent("Word.Application");
 			//设置word不可见，否则会弹出word界面
 			app.setProperty("Visible", false);
 			//获得word中所有打开的文档,返回Documents对象
 			Dispatch docs = app.getProperty("Documents").toDispatch();
 			//调用Documents对象中Open方法打开文档，并返回打开的文档对象Document
-			Dispatch doc = Dispatch.call(docs, "Open", inputFileName, false, true).toDispatch();
+			doc = Dispatch.call(docs, "Open", inputFileName, false, true).toDispatch();
 			//调用Document对象的SaveAs方法，将文档保存为pdf格式
 			Dispatch.call(doc, "ExportAsFixedFormat", outputFileName, WORD_FORMAT_PDF);
-			//关闭文档
-			Dispatch.call(doc, "Close",false);
-			//关闭word应用程序
-			app.invoke("Quit", 0);
 			result = true;
 			logger.debug("OfficeFileUtil.officeWordToPdf method executed is successful, output file path is: " + outputFileName);
-		}  catch (Exception e) {
+		} catch (Exception e) {
 			logger.error("OfficeFileUtil.officeWordToPdf method executed is error: ", e);
+		} finally {
+			Dispatch.call(doc, "Close", false);  
+            if (app != null) {      
+                app.invoke("Quit", new Variant[] {});      
+            }
+            ComThread.Release();
 		}
 		long endTime = System.currentTimeMillis();
 	    logger.debug("OfficeFileUtil.officeWordToPdf method executed spend time is: " + (endTime - startTime)/1000 + "s");
@@ -263,25 +269,29 @@ public class OfficeFileUtil {
 	public static boolean officeDocToDocx(String inputFileName,String outputFileName){
 		long startTime = System.currentTimeMillis();
 		boolean result = false;
+		ActiveXComponent app = null;
+		Dispatch doc = null;
 		try {
 			//打开word应用程序
-			ActiveXComponent app = new ActiveXComponent("Word.Application");
+			app = new ActiveXComponent("Word.Application");
 			//设置word不可见，否则会弹出word界面
 			app.setProperty("Visible", false);
 			//获得word中所有打开的文档,返回Documents对象
 			Dispatch docs = app.getProperty("Documents").toDispatch();
 			//调用Documents对象中Open方法打开文档，并返回打开的文档对象Document
-			Dispatch doc = Dispatch.call(docs, "Open", inputFileName, false, true).toDispatch();
+			doc = Dispatch.call(docs, "Open", inputFileName, false, true).toDispatch();
 			//调用Document对象的SaveAs方法，将文档保存为pdf格式
 			Dispatch.call(doc, "SaveAs", outputFileName, DOC_FORMAT_DOCX);
-			//关闭文档
-			Dispatch.call(doc, "Close",false);
-			//关闭word应用程序
-			app.invoke("Quit", 0);
 			result = true;
 			logger.debug("OfficeFileUtil.officeDocToDocx method executed is successful, output file path is: " + outputFileName);
 		}  catch (Exception e) {
 			logger.error("OfficeFileUtil.officeDocToDocx method executed is error: ", e);
+		} finally {
+			Dispatch.call(doc, "Close", false);  
+            if (app != null) {      
+                app.invoke("Quit", new Variant[] {});      
+            }
+            ComThread.Release();
 		}
 		long endTime = System.currentTimeMillis();
 	    logger.debug("OfficeFileUtil.officeDocToDocx method executed spend time is: " + (endTime - startTime)/1000 + "s");
@@ -290,7 +300,7 @@ public class OfficeFileUtil {
 	
 	public static void main(String[] args) {
 		//officeDocToDocx("d:/app/test.doc", "d:/app/test.docx");
-		officeWordToPdf("d:/app/test.doc", "d:/app/test.pdf");
+		officeWordToPdf("d:/app/test.docx", "d:/app/test.pdf");
 	}
 	
     /**
