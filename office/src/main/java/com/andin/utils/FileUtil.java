@@ -27,7 +27,6 @@ public class FileUtil {
 	
     private static final String FILE_DEBUG = PropertiesUtil.getProperties("file.debug", null);
     
-    private static final String FILE_DEBUG_PATH = PropertiesUtil.getProperties("file.debug.path", null);
 		
 	/**
 	 * 获取包含文件名的不带后缀的文件名列表
@@ -177,12 +176,10 @@ public class FileUtil {
 	 * @return
 	 */
 	public static boolean deleteFilePath(String path) {
-		File file = new File(path);
-		if(ConstantUtil.TRUE.equals(FILE_DEBUG) && file.exists()) {
-			String fileName = file.getName();
-			String copyFilePath = FILE_DEBUG_PATH + "/" + fileName;
-			copyFilePath(path, copyFilePath);
+		if(ConstantUtil.TRUE.equals(FILE_DEBUG)) {
+			return true;
 		}
+		File file = new File(path);
 		return deleteFile(file);
 	}
 	

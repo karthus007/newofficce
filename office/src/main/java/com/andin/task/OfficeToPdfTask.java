@@ -1,5 +1,7 @@
 package com.andin.task;
 
+import java.util.Map;
+import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import java.util.concurrent.ThreadPoolExecutor;
@@ -31,6 +33,8 @@ public class OfficeToPdfTask {
 	private static Logger logger = LoggerFactory.getLogger(OfficeToPdfTask.class);
 
 	private static ExecutorService pool = Executors.newFixedThreadPool(TASK_THREAD_COUNT);
+	
+	public static volatile Map<String, Integer> map = new ConcurrentHashMap<>();
 
 	@Scheduled(cron = "*/5 * * * * ?")/** 每五秒触发一次 **/
 	public void getOfficeTaskListToPdf() throws Exception{
@@ -80,7 +84,25 @@ public class OfficeToPdfTask {
 						uploadResult = HttpClientUtil.uploadFile(taskId, filePath);
 						if(uploadResult) {
 							//更新任务的转换状态						
-							updateResult = HttpClientUtil.updateTaskStatus(taskId);
+							updateResult = HttpClientUtil.updateTaskStatus(taskId, 5);
+						}
+					}else {
+						Integer taskIdCount = OfficeToPdfTask.map.get(taskId);
+						if(taskIdCount == null) {
+							taskIdCount = 0;
+						}
+						if(taskIdCount < 3) {
+							try {
+								Thread.sleep(120000);
+							} catch (Exception e) {
+								logger.debug("OfficeToPdfTask.getOfficeTaskListToPdf Thread sleep is error, ", e);
+							}
+							//更新任务的转换状态						
+							updateResult = HttpClientUtil.updateTaskStatus(taskId, 0);
+							taskIdCount += 1;
+							OfficeToPdfTask.map.put(taskId, taskIdCount);
+						}else {
+							OfficeToPdfTask.map.remove(taskId);
 						}
 					}
 				}
