@@ -46,9 +46,11 @@ public class OfficeFileUtil {
 	
 	private final static String PDF_DOCX_PATH = StringUtil.getUploadFilePath() + ConstantUtil.PDF_DOCX_PATH;
 	
-	private final static String PDF_XLSX_PATH = StringUtil.getUploadFilePath() + ConstantUtil.PDF_XLSX_PATH;
+	// private final static String PDF_XLSX_PATH = StringUtil.getUploadFilePath() + ConstantUtil.PDF_XLSX_PATH;
 	
 	private final static String PDF_PPTX_PATH = StringUtil.getUploadFilePath() + ConstantUtil.PDF_PPTX_PATH;
+
+	private final static String IMAGE_XLSX_PATH = StringUtil.getUploadFilePath() + ConstantUtil.PDF_XLSX_PATH;
 		
 	public static boolean officeToPdf(String inputFileName) {
 		boolean result = false;
@@ -80,13 +82,15 @@ public class OfficeFileUtil {
 				logger.debug("输入文件为：" + inputFileName + ", docx转pdf的结果为：" + result);
 				FileUtil.deleteFilePath(DOCX_PATH + inputFileName);
 			}else if(ConstantUtil.XLSX.equals(fileType) || ConstantUtil.XLS.equals(fileType)) {
+				//获取生成的文件名前缀
+				String prefix = fileName + "-";
 				//将XLSX文件转换为PNG
-				result = asposeExcelToImage(XLSX_PATH + inputFileName, fileName, ConstantUtil.PNG);
+				result = asposeExcelToImage(XLSX_PATH + inputFileName, prefix, ConstantUtil.PNG);
 				logger.debug("输入文件为：" + inputFileName + ", xlsx转png的结果为：" + result);
 				FileUtil.deleteFilePath(XLSX_PATH + inputFileName);
 				if(result) {
 					//将png文件压缩成zip包
-					result = FileUtil.getImageFileZipByFileName(fileName);
+					result = FileUtil.getFileZipByMatchFileNamePrefix(fileName, IMAGE_XLSX_PATH, prefix);
 					logger.debug("输入文件为：" + inputFileName + ", png文件压缩成zip的结果为：" + result);
 				}
 			}else if(ConstantUtil.PPTX.equals(fileType) || ConstantUtil.PPT.equals(fileType)) {
@@ -116,7 +120,7 @@ public class OfficeFileUtil {
 	private static boolean asposeExcelToImage(String inputFileName, String fileName, String type){
 		boolean result = false;
 		try {
-			String outputFileName = PDF_XLSX_PATH + fileName;
+			String outputFileName = IMAGE_XLSX_PATH + fileName + "-";
 			byte[] bytes = ConstantUtil.ASPOSE_WORD_LICENSE.getBytes("UTF-8");
 			InputStream in =  new ByteArrayInputStream(bytes);
 			com.aspose.cells.License asposeLic = new com.aspose.cells.License();
@@ -156,7 +160,7 @@ public class OfficeFileUtil {
                 //sheet.getPageSetup().setBottomMargin(0);
                 //sheet.getPageSetup().setTopMargin(0);
                 SheetRender render = new SheetRender(sheet, imgOptions);
-                render.toImage(0,  outputFileName + "-" + (i+1) + type);
+                render.toImage(0,  outputFileName + (i+1) + type);
                 
 			}
 			in.close();
