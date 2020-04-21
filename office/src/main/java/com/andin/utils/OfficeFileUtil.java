@@ -4,10 +4,8 @@ import java.io.ByteArrayInputStream;
 import java.io.File;
 import java.io.InputStream;
 import java.util.List;
-import java.util.ListIterator;
 
 import org.apache.pdfbox.multipdf.PDFMergerUtility;
-import org.apache.pdfbox.multipdf.Splitter;
 import org.apache.pdfbox.pdmodel.PDDocument;
 import org.apache.pdfbox.text.PDFTextStripper;
 import org.slf4j.Logger;
@@ -24,6 +22,7 @@ import com.aspose.cells.Style;
 import com.aspose.cells.Workbook;
 import com.aspose.cells.Worksheet;
 import com.aspose.cells.WorksheetCollection;
+import com.aspose.slides.Presentation;
 import com.aspose.words.Document;
 import com.jacob.activeX.ActiveXComponent;
 import com.jacob.com.ComThread;
@@ -169,6 +168,45 @@ public class OfficeFileUtil {
         return result;
 	}
 	
+	
+	/**
+	 * excel转html
+	 * @param inputFileName
+	 * @param outputFileName
+	 * @throws Exception
+	 */
+	public static boolean asposeExcelToHtml(String inputFileName, String outputFileName){
+		boolean result = false;
+		try {
+			byte[] bytes = ConstantUtil.ASPOSE_WORD_LICENSE.getBytes("UTF-8");
+			InputStream in =  new ByteArrayInputStream(bytes);
+			com.aspose.cells.License asposeLic = new com.aspose.cells.License();
+			asposeLic.setLicense(in);
+       	 	Workbook book = new Workbook(inputFileName);
+       	 	Style style = book.createStyle();
+			Border top = style.getBorders().getByBorderType(BorderType.TOP_BORDER);
+			top.setLineStyle(CellBorderType.THIN);
+			top.setColor(Color.fromArgb(211, 211, 211));
+			Border bottom = style.getBorders().getByBorderType(BorderType.BOTTOM_BORDER);
+			bottom.setLineStyle(CellBorderType.THIN);
+			bottom.setColor(Color.fromArgb(211, 211, 211));
+			Border left = style.getBorders().getByBorderType(BorderType.LEFT_BORDER);
+			left.setLineStyle(CellBorderType.THIN);
+			left.setColor(Color.fromArgb(211, 211, 211));
+			Border right = style.getBorders().getByBorderType(BorderType.RIGHT_BORDER);
+			right.setLineStyle(CellBorderType.THIN);
+			right.setColor(Color.fromArgb(211, 211, 211));
+			book.setDefaultStyle(style);
+       	 	book.save(outputFileName, com.aspose.cells.SaveFormat.HTML);
+			in.close();
+			result = true;
+			logger.debug("OfficeFileUtil.asposeExcelToHtml method executed is successful, output file path is: " + outputFileName);
+		}  catch (Exception e) {
+			logger.error("OfficeFileUtil.asposeExcelToHtml method executed is error: ", e);
+		}
+        return result;
+	}
+	
 	/**
 	 * word文档接收修订
 	 * @param inputFileName
@@ -200,7 +238,7 @@ public class OfficeFileUtil {
 	 * @param outputFileName
 	 * @throws Exception
 	 */
-	private static boolean asposeWordToPdf(String inputFileName, String outputFileName){
+	public static boolean asposeWordToPdf(String inputFileName, String outputFileName){
 		boolean result = false;
 		try {
 			byte[] bytes = ConstantUtil.ASPOSE_WORD_LICENSE.getBytes("UTF-8");
@@ -208,16 +246,61 @@ public class OfficeFileUtil {
 			com.aspose.words.License asposeLic = new com.aspose.words.License();
 			asposeLic.setLicense(in);
 			Document convertDoc = new Document(inputFileName);
-			if(convertDoc.getProtectionType() == 2) {
-				convertDoc.unprotect("http://www.gztemco.com/");
-			}
-			convertDoc.acceptAllRevisions();
 			convertDoc.save(outputFileName, com.aspose.words.SaveFormat.PDF);
 			in.close();
 			result = true;
 			logger.debug("OfficeFileUtil.asposeWordToPdf method executed is successful, output file path is: " + outputFileName);
 		}  catch (Exception e) {
 			logger.error("OfficeFileUtil.asposeWordToPdf method executed is error: ", e);
+		}
+        return result;
+	}
+	
+	
+	/**
+	 * excel转pdf
+	 * @param inputFileName
+	 * @param outputFileName
+	 * @throws Exception
+	 */
+	public static boolean asposeExcelToPdf(String inputFileName, String outputFileName){
+		boolean result = false;
+		try {
+			byte[] bytes = ConstantUtil.ASPOSE_WORD_LICENSE.getBytes("UTF-8");
+			InputStream in =  new ByteArrayInputStream(bytes);
+			com.aspose.cells.License asposeLic = new com.aspose.cells.License();
+			asposeLic.setLicense(in);
+       	 	Workbook book = new Workbook(inputFileName);
+       	 	book.save(outputFileName, com.aspose.cells.SaveFormat.PDF);
+			in.close();
+			result = true;
+			logger.debug("OfficeFileUtil.asposeExcelToPdf method executed is successful, output file path is: " + outputFileName);
+		}  catch (Exception e) {
+			logger.error("OfficeFileUtil.asposeExcelToPdf method executed is error: ", e);
+		}
+        return result;
+	}
+	
+	/**
+	 * pptx转pdf
+	 * @param inputFileName
+	 * @param outputFileName
+	 * @throws Exception
+	 */
+	public static boolean asposePptxToPdf(String inputFileName, String outputFileName){
+		boolean result = false;
+		try {
+			byte[] bytes = ConstantUtil.ASPOSE_WORD_LICENSE.getBytes("UTF-8");
+			InputStream in =  new ByteArrayInputStream(bytes);
+			com.aspose.slides.License asposeLic = new com.aspose.slides.License();
+			asposeLic.setLicense(in);
+        	Presentation pres = new Presentation(inputFileName);
+        	pres.save(outputFileName, com.aspose.slides.SaveFormat.Pdf);
+			in.close();
+			result = true;
+			logger.debug("OfficeFileUtil.asposePptxToPdf method executed is successful, output file path is: " + outputFileName);
+		}  catch (Exception e) {
+			logger.error("OfficeFileUtil.asposePptxToPdf method executed is error: ", e);
 		}
         return result;
 	}
@@ -308,89 +391,47 @@ public class OfficeFileUtil {
 	}
 	
     /**
-     * 判断PDF第一页是否正常
+           * 获取PDF文本内容
      * @param fileNamePath
      * @return
      */
-    public static boolean checkPdfPage(String fileNamePath) throws Exception{
+    public static String getPDFText(String fileNamePath){
 		logger.debug("OfficeFileUtil.checkPdfPage method executed is start...");
-    	boolean result = true;
-        File file = new File(fileNamePath);
-        //获取第二页的文本，判断pdf是否需要切换
-        PDFTextStripper stripper = new PDFTextStripper();
-        stripper.setStartPage(2);
-        stripper.setEndPage(2);
-        PDDocument document = PDDocument.load(file);
-        String content = stripper.getText(document).trim();
-        //第二页文本小于60则需要切换，大于则不切换
-        int length = content.length();
-        if(length < 4) {
-        	document.removePage(1);
-        	document.save(fileNamePath);
-        }else if(length < 80 && length > 4) {
-        	document.removePage(0);
-        	document.removePage(0);
-        	document.save(fileNamePath);
-        	result = false;
+    	String content = "";
+		try {
+	        File file = new File(fileNamePath);
+	        PDFTextStripper stripper = new PDFTextStripper();
+	        PDDocument document = PDDocument.load(file);
+	        content = stripper.getText(document).trim();
+	        document.close();
+	        logger.debug("OfficeFileUtil.getPDFText method executed is successful, fileNamePath is: " + fileNamePath);
+		} catch (Exception e) {
+			logger.error("OfficeFileUtil.getPDFText method executed is error: ", e);
         }
-        document.close();
-        logger.debug("OfficeFileUtil.checkPdfPage method executed is successful, fileNamePath is: " + fileNamePath);
-        return result;
+        return content;
     }
     
     /**
-     * 获取新PDF的第一页作为首页
-     * @param fileNamePath
-     * @return
-     */
-    public static boolean splitPdfPage(String inputFileName, String outputFileName) {
-		logger.debug("OfficeFileUtil.splitPdfPage method executed is start...");
-		boolean result = false;
-        try {
-        	boolean flag = asposeWordToPdf(inputFileName, outputFileName);
-        	if(flag) {
-            	File file = new File(outputFileName);
-            	PDDocument document = PDDocument.load(file);
-                Splitter splitter = new Splitter();
-                splitter.setStartPage(1);
-                splitter.setEndPage(1);
-                List<PDDocument> pages = splitter.split(document);
-                ListIterator<PDDocument> iterator = pages.listIterator();
-                while (iterator.hasNext()) {
-                    PDDocument pd = iterator.next();
-                    pd.save(outputFileName);
-                    pd.close();
-                }
-                document.close();
-                result = true;
-    			logger.debug("OfficeFileUtil.splitPdfPage method executed is successful, outputFileName is: " + outputFileName);
-        	}
-        } catch (Exception e) {
-			logger.error("OfficeFileUtil.splitPdfPage method executed is error: ", e);
-        }
-        return result;
-    }
-    
-    /**
-     * 拼接PDF
+          * 拼接PDF
      * @param tempFileName
      * @param outputFileName
      * @return
      */
-    public static boolean mergePdfPage(String tempFileName, String outputFileName){
+    public static boolean mergePDFFile(List<String> filePathList, String outputFileName){
 		logger.debug("OfficeFileUtil.mergePdfPage method executed is start...");
 		boolean result = false;
         try {
             PDFMergerUtility mergePdf = new PDFMergerUtility();  
-            mergePdf.addSource(tempFileName);
-            mergePdf.addSource(outputFileName);
+            for (String filePathName : filePathList) {
+                mergePdf.addSource(filePathName);
+			}
             //合并生成PDF文件
             mergePdf.setDestinationFileName(outputFileName);  
             mergePdf.mergeDocuments(null);
             result = true;
-			logger.debug("OfficeFileUtil.mergePdfPage method executed is successful...");
+			logger.debug("OfficeFileUtil.mergePDFFile method executed is successful...");
         } catch (Exception e) {
-			logger.error("OfficeFileUtil.mergePdfPage method executed is error: ", e);
+			logger.error("OfficeFileUtil.mergePDFFile method executed is error: ", e);
         }
         return result;
     }
