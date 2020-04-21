@@ -99,7 +99,7 @@ public class OfficeFileUtil {
 					//将DOCX文件转换为PDF
 					
 					// aspose convert to pdf
-					if("1".equals(OFFICE_CONVERT_TYPE)) {
+					if(ConstantUtil.ASPOSE_CONVERT_TYPE.equals(OFFICE_CONVERT_TYPE)) {
 						result = asposeWordToPdf(input, output);
 					// default libreoffice convert to pdf
 					}else {
@@ -114,7 +114,7 @@ public class OfficeFileUtil {
 				FileUtil.deleteFilePath(input);
 			}else if(ConstantUtil.XLSX.equals(fileType) || ConstantUtil.XLS.equals(fileType)) {
 				// excel to html
-				if("1".equals(OFFICE_EXCEL_TYPE)) {
+				if(ConstantUtil.OFFICE_EXCEL_TO_HTML.equals(OFFICE_EXCEL_TYPE)) {
 					// html文件路径
 					String output = HTML_XLSX_PATH + fileName + ConstantUtil.HTML;
 					//获取生成的文件名前缀
@@ -134,7 +134,7 @@ public class OfficeFileUtil {
 						logger.debug("输入文件为：" + inputFileName + ", html文件压缩成zip的结果为：" + result);
 					}
 				// excel to pdf
-				}else if("2".equals(OFFICE_EXCEL_TYPE)) {
+				}else if(ConstantUtil.OFFICE_EXCEL_TO_PDF.equals(OFFICE_EXCEL_TYPE)) {
 					String output = StringUtil.getOutputFilePathByFileName(inputFileName);
 					//将PPTX文件转换为PDF
 					for (int i = 0; i < repeatCount; i++) {
@@ -143,7 +143,7 @@ public class OfficeFileUtil {
 						//将EXCEL文件转换为PDF
 						
 						// aspose convert to pdf
-						if("1".equals(OFFICE_CONVERT_TYPE)) {
+						if(ConstantUtil.ASPOSE_CONVERT_TYPE.equals(OFFICE_CONVERT_TYPE)) {
 							result = asposeExcelToPdf(input, output);
 						// default libreoffice convert to pdf
 						}else {
@@ -184,7 +184,7 @@ public class OfficeFileUtil {
 					//将PPT文件转换为PDF
 					
 					// aspose convert to pdf
-					if("1".equals(OFFICE_CONVERT_TYPE)) {
+					if(ConstantUtil.ASPOSE_CONVERT_TYPE.equals(OFFICE_CONVERT_TYPE)) {
 						result = asposePptxToPdf(input, output);
 					// default libreoffice convert to pdf
 					}else {
@@ -234,7 +234,7 @@ public class OfficeFileUtil {
 					FileUtil.deleteFilePath(output);
 					
 					// aspose convert to pdf
-					if("1".equals(OFFICE_CONVERT_TYPE)) {
+					if(ConstantUtil.ASPOSE_CONVERT_TYPE.equals(OFFICE_CONVERT_TYPE)) {
 						result = asposeWordToPdf(input, output);
 					// default office convert to pdf
 					}else {
@@ -249,7 +249,7 @@ public class OfficeFileUtil {
 				FileUtil.deleteFilePath(input);
 			}else if(ConstantUtil.XLSX.equals(fileType) || ConstantUtil.XLS.equals(fileType)) {
 				// excel to html
-				if("1".equals(OFFICE_EXCEL_TYPE)) {
+				if(ConstantUtil.OFFICE_EXCEL_TO_HTML.equals(OFFICE_EXCEL_TYPE)) {
 					// html文件路径
 					String output = HTML_XLSX_PATH + fileName + ConstantUtil.HTML;
 					//获取生成的文件名前缀
@@ -269,7 +269,7 @@ public class OfficeFileUtil {
 						logger.debug("输入文件为：" + inputFileName + ", html文件压缩成zip的结果为：" + result);
 					}
 				// excel to pdf
-				}else if("2".equals(OFFICE_EXCEL_TYPE)) {
+				}else if(ConstantUtil.OFFICE_EXCEL_TO_PDF.equals(OFFICE_EXCEL_TYPE)) {
 					String output = StringUtil.getOutputFilePathByFileName(inputFileName);
 					//将PPTX文件转换为PDF
 					for (int i = 0; i < repeatCount; i++) {

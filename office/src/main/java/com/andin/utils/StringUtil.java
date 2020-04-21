@@ -123,11 +123,11 @@ public class StringUtil {
 			path.append(ConstantUtil.PDF);
 		}else if(type.equals(ConstantUtil.XLS) || type.equals(ConstantUtil.XLSX)) {
 			// html:1 pdf:2 png:3 default:3
-			if("1".equals(OFFICE_EXCEL_TYPE)) {
+			if(ConstantUtil.OFFICE_EXCEL_TO_HTML.equals(OFFICE_EXCEL_TYPE)) {
 				path.append(ConstantUtil.HTML_XLSX_PATH);
 				path.append(name);
 				path.append(ConstantUtil.ZIP);
-			}else if("2".equals(OFFICE_EXCEL_TYPE)) {
+			}else if(ConstantUtil.OFFICE_EXCEL_TO_PDF.equals(OFFICE_EXCEL_TYPE)) {
 				path.append(ConstantUtil.PDF_XLSX_PATH);
 				path.append(name);
 				path.append(ConstantUtil.PDF);

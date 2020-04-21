@@ -96,6 +96,16 @@ public class ConstantUtil {
 	
 	public static final String LINUX = "linux";
 	
+	public static final String OFFICE_EXCEL_TO_HTML = "1";
+	
+	public static final String OFFICE_EXCEL_TO_PDF = "2";
+	
+	public static final String OFFICE_EXCEL_TO_IMAGE = "3";
+	
+	public static final String ASPOSE_CONVERT_TYPE = "1";
+	
+	public static final String OFFICE_CONVERT_TYPE = "2";
+	
 	
 	/********************* 上传文件路径常量 *********************/
 	

@@ -200,7 +200,7 @@ public class OfficeController {
 		} catch (Exception e) {
 			map.put(ConstantUtil.RESULT_CODE, ConstantUtil.DEFAULT_ERROR_CODE);
 			map.put(ConstantUtil.RESULT_MSG, ConstantUtil.DEFAULT_ERROR_MSG);
-			logger.error("OfficeController.download method execute is error: ", e.getMessage());
+			logger.error("OfficeController.download method execute is error: ", e);
 		}
 		return map;
 	}
@@ -223,7 +223,7 @@ public class OfficeController {
 		} catch (Exception e) {
 			map.put(ConstantUtil.RESULT_CODE, ConstantUtil.DEFAULT_ERROR_CODE);
 			map.put(ConstantUtil.RESULT_MSG, ConstantUtil.DEFAULT_ERROR_MSG);
-			logger.error("OfficeController.officeToPdf method execute is error: ", e.getMessage());
+			logger.error("OfficeController.officeToPdf method execute is error: ", e);
 		}
 		return map;
 	}
