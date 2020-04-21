@@ -249,10 +249,10 @@ public class OfficeFileUtil {
 		} catch (Exception e) {
 			logger.error("OfficeFileUtil.officeWordToPdf method executed is error: ", e);
 		} finally {
-			//Dispatch.call(doc, "Close", false);  
+			// Dispatch.call(doc, "Close", false);  
 			Dispatch.call(doc, "Close", new Variant(0));  
             if (app != null) {      
-                // app.invoke("Quit", new Variant[] {});
+            	// app.invoke("Quit", new Variant[] {});
                 app.invoke("Quit", new Variant(0));      
             }
             ComThread.Release();

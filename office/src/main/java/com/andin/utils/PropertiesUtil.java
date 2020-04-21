@@ -12,7 +12,11 @@ public class PropertiesUtil {
 
 	private static final Logger logger = LoggerFactory.getLogger(PropertiesUtil.class);
 	
-	private static final String APP_CONFIG_PATH = "d:/app/config/";
+	private static final String LINUX_APP_CONFIG_PATH = "/app/config/";
+	
+	private static final String WINDOWS_C_APP_CONFIG_PATH = "c:/app/config/";
+	
+	private static final String WINDOWS_D_APP_CONFIG_PATH = "d:/app/config/";
 	
 	private static final String CONFIG_FILE_PATH = "config.properties";
 	
@@ -27,11 +31,29 @@ public class PropertiesUtil {
 		Properties props = new Properties();		
 		InputStream stream = null;
 		try {
-			File file = new File(APP_CONFIG_PATH + CONFIG_FILE_PATH);
-			if(file.exists()) {
-				stream = new FileInputStream(file);
+			//获取系统的类型
+			String systemType = StringUtil.getSystemType();
+			if(ConstantUtil.WINDOWS.equals(systemType)) {
+				// windows config
+				File cfile = new File(WINDOWS_C_APP_CONFIG_PATH + CONFIG_FILE_PATH);
+				if(cfile.exists()) {
+					stream = new FileInputStream(cfile);
+				}else {
+					File dfile = new File(WINDOWS_D_APP_CONFIG_PATH + CONFIG_FILE_PATH);
+					if(dfile.exists()) {
+						stream = new FileInputStream(dfile);
+					}else {
+						stream = PropertiesUtil.class.getClassLoader().getResourceAsStream(configpath);		
+					}
+				}
 			}else {
-				stream = PropertiesUtil.class.getClassLoader().getResourceAsStream(configpath);				
+				// linux config
+				File file = new File(LINUX_APP_CONFIG_PATH + CONFIG_FILE_PATH);
+				if(file.exists()) {
+					stream = new FileInputStream(file);
+				}else {
+					stream = PropertiesUtil.class.getClassLoader().getResourceAsStream(configpath);		
+				}
 			}
 			props.load(stream);
 			logger.debug("***PropertiesUtils load properties is successful, file name is: " + configpath);
