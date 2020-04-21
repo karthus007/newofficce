@@ -17,6 +17,8 @@ public class StringUtil {
     private static final String FILE_PATH = PropertiesUtil.getProperties("file.path", null);
     
     private static final String FILE_STATUS = PropertiesUtil.getProperties("file.status", null);
+    
+    private static final String OFFICE_EXCEL_TYPE = PropertiesUtil.getProperties("office.excel.type", null);
 	
 	private final static String UPLOAD_PATH = "/upload/";
 	
@@ -81,19 +83,24 @@ public class StringUtil {
 	 * @param fileName
 	 * @return
 	 */
-	public static String getFilePathByFileName(String fileName) {
+	public static String getInputFilePathByFileName(String fileName) {
+		int index = fileName.lastIndexOf(".");
+		// 文件名前缀
+		String name = fileName.substring(0, index);
+		// 文件名后缀
+		String type = fileName.substring(index);
 		StringBuffer path = new StringBuffer();
 		path.append(getUploadFilePath());
-		if(fileName.endsWith(ConstantUtil.DOC) || fileName.endsWith(ConstantUtil.DOCX)) {
+		if(type.equals(ConstantUtil.DOC) || type.equals(ConstantUtil.DOCX)) {
 			path.append(ConstantUtil.DOCX_PATH);
-		}else if(fileName.endsWith(ConstantUtil.XLS) || fileName.endsWith(ConstantUtil.XLSX)) {
+		}else if(type.equals(ConstantUtil.XLS) || type.equals(ConstantUtil.XLSX)) {
 			path.append(ConstantUtil.XLSX_PATH);
-		}else if(fileName.endsWith(ConstantUtil.PPT) || fileName.endsWith(ConstantUtil.PPTX)) {
+		}else if(type.equals(ConstantUtil.PPT) || type.equals(ConstantUtil.PPTX)) {
 			path.append(ConstantUtil.PPTX_PATH);
-		}else if(fileName.endsWith(ConstantUtil.PDF)) {
+		}else if(type.equals(ConstantUtil.PDF)) {
 			path.append(ConstantUtil.PDF_PDF_PATH);
 		}
-		path.append(fileName);
+		path.append(name);
 		return path.toString();
 	}
 	
@@ -102,20 +109,42 @@ public class StringUtil {
 	 * @param fileName
 	 * @return
 	 */
-	public static String getPdfFilePathByFileName(String fileName, String name) {
+	public static String getOutputFilePathByFileName(String fileName) {
+		int index = fileName.lastIndexOf(".");
+		// 文件名前缀
+		String name = fileName.substring(0, index);
+		// 文件名后缀
+		String type = fileName.substring(index);
 		StringBuffer path = new StringBuffer();
 		path.append(getUploadFilePath());
-		if(fileName.endsWith(ConstantUtil.DOC) || fileName.endsWith(ConstantUtil.DOCX)) {
+		if(type.equals(ConstantUtil.DOC) || type.equals(ConstantUtil.DOCX)) {
 			path.append(ConstantUtil.PDF_DOCX_PATH);
-		}else if(fileName.endsWith(ConstantUtil.XLS) || fileName.endsWith(ConstantUtil.XLSX)) {
-			path.append(ConstantUtil.PDF_XLSX_PATH);
-		}else if(fileName.endsWith(ConstantUtil.PPT) || fileName.endsWith(ConstantUtil.PPTX)) {
+			path.append(name);
+			path.append(ConstantUtil.PDF);
+		}else if(type.equals(ConstantUtil.XLS) || type.equals(ConstantUtil.XLSX)) {
+			// html:1 pdf:2 png:3 default:3
+			if("1".equals(OFFICE_EXCEL_TYPE)) {
+				path.append(ConstantUtil.HTML_XLSX_PATH);
+				path.append(name);
+				path.append(ConstantUtil.ZIP);
+			}else if("2".equals(OFFICE_EXCEL_TYPE)) {
+				path.append(ConstantUtil.PDF_XLSX_PATH);
+				path.append(name);
+				path.append(ConstantUtil.PDF);
+			}else {
+				path.append(ConstantUtil.PDF_XLSX_PATH);	
+				path.append(name);
+				path.append(ConstantUtil.ZIP);
+			}
+		}else if(type.equals(ConstantUtil.PPT) || type.equals(ConstantUtil.PPTX)) {
 			path.append(ConstantUtil.PDF_PPTX_PATH);
-		}else if(fileName.endsWith(ConstantUtil.PDF)) {
+			path.append(name);
+			path.append(ConstantUtil.PDF);
+		}else if(type.equals(ConstantUtil.PDF)) {
 			path.append(ConstantUtil.PDF_PDF_PATH);
+			path.append(name);
+			path.append(ConstantUtil.PDF);
 		}
-		path.append(name);
-		path.append(ConstantUtil.PDF);
 		return path.toString();
 	}
 	

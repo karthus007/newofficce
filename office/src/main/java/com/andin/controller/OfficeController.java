@@ -145,21 +145,8 @@ public class OfficeController {
 		logger.debug("OfficeController.upload method execute is start...");
 		Map<String, Object> map = new HashMap<String, Object>();
 		try {
-			StringBuffer path = new StringBuffer();
-			path.append(StringUtil.getUploadFilePath());
 			String fileName = part.getSubmittedFileName();
-			if(fileName.endsWith(ConstantUtil.DOC) || fileName.endsWith(ConstantUtil.DOCX)) {
-				path.append(ConstantUtil.DOCX_PATH);
-			}else if(fileName.endsWith(ConstantUtil.XLS) || fileName.endsWith(ConstantUtil.XLSX)) {
-				path.append(ConstantUtil.XLSX_PATH);
-			}else if(fileName.endsWith(ConstantUtil.PPT) || fileName.endsWith(ConstantUtil.PPTX)) {
-				path.append(ConstantUtil.PPTX_PATH);
-			}else {
-				map.put(ConstantUtil.RESULT_CODE, ConstantUtil.UPLOAD_FILE_TYPE_ERROR_CODE);
-				map.put(ConstantUtil.RESULT_MSG, ConstantUtil.UPLOAD_FILE_TYPE_ERROR_MSG);
-				return map;
-			}
-			path.append(fileName);
+			String path = StringUtil.getInputFilePathByFileName(fileName);
 			InputStream in = part.getInputStream();
 			OutputStream os = new FileOutputStream(path.toString());
 			byte[] b = new byte[1024*4];
@@ -186,24 +173,10 @@ public class OfficeController {
 		logger.debug("OfficeController.download method execute is start...");
 		Map<String, Object> map = new HashMap<String, Object>();
 		try {
-			String fileName = URLDecoder.decode(req.getParameter("name"), "UTF-8");
-			String type = "." + URLDecoder.decode(req.getParameter("type"), "UTF-8");
-			StringBuffer path = new StringBuffer();
-			path.append(StringUtil.getUploadFilePath());
-			if(type.equals(ConstantUtil.DOC) || type.equals(ConstantUtil.DOCX)) {
-				path.append(ConstantUtil.PDF_DOCX_PATH);
-			}else if(type.equals(ConstantUtil.XLS) || type.equals(ConstantUtil.XLSX)) {
-				path.append(ConstantUtil.HTML_XLSX_PATH);
-			}else if(type.equals(ConstantUtil.PPT) || type.equals(ConstantUtil.PPTX)) {
-				path.append(ConstantUtil.PDF_PPTX_PATH);
-			}else {
-				map.put(ConstantUtil.RESULT_CODE, ConstantUtil.DOWNLOAD_FILE_TYPE_ERROR_CODE);
-				map.put(ConstantUtil.RESULT_MSG, ConstantUtil.DOWNLOAD_FILE_TYPE_ERROR_MSG);
-				return map;
-			}
-			path.append(fileName);
-	        File file = new File(path.toString());
-	        
+			String name = URLDecoder.decode(req.getParameter("name"), "UTF-8");
+			String path = StringUtil.getOutputFilePathByFileName(name);
+	        File file = new File(path);
+	        String fileName = file.getName();
 	        //设置响应头
 	        resp.setContentLength((int) file.length());
 	        resp.setCharacterEncoding(ConstantUtil.UTF_8);

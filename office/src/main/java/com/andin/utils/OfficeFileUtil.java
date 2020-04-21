@@ -33,82 +33,303 @@ public class OfficeFileUtil {
 
 	private static Logger logger = LoggerFactory.getLogger(OfficeFileUtil.class);
 	
+    private static final String OFFICE_EXCEL_TYPE = PropertiesUtil.getProperties("office.excel.type", null);
+    
+    private static final String OFFICE_CONVERT_TYPE = PropertiesUtil.getProperties("office.convert.type", null);
+	
 	// WORD转PDF
 	public static final int WORD_FORMAT_PDF = 17;
 	// DOC转DOCX
 	private static final int DOC_FORMAT_DOCX = 12;
 	
-	private final static String DOCX_PATH = StringUtil.getUploadFilePath() + ConstantUtil.DOCX_PATH;
-	
 	private final static String XLSX_PATH = StringUtil.getUploadFilePath() + ConstantUtil.XLSX_PATH;
-	
-	private final static String PPTX_PATH = StringUtil.getUploadFilePath() + ConstantUtil.PPTX_PATH;
-	
-	private final static String PDF_DOCX_PATH = StringUtil.getUploadFilePath() + ConstantUtil.PDF_DOCX_PATH;
-	
-	// private final static String PDF_XLSX_PATH = StringUtil.getUploadFilePath() + ConstantUtil.PDF_XLSX_PATH;
-	
-	private final static String PDF_PPTX_PATH = StringUtil.getUploadFilePath() + ConstantUtil.PDF_PPTX_PATH;
 
 	private final static String IMAGE_XLSX_PATH = StringUtil.getUploadFilePath() + ConstantUtil.PDF_XLSX_PATH;
+	
+	private final static String HTML_XLSX_PATH = StringUtil.getUploadFilePath() + ConstantUtil.HTML_XLSX_PATH;
 		
+	/**
+	 * office to pdf
+	 * @param inputFileName
+	 * @return
+	 */
 	public static boolean officeToPdf(String inputFileName) {
+		long startTime = System.currentTimeMillis();
 		boolean result = false;
 		try {
-			int repeatCount = 3;
-			logger.debug("OfficeFileUtil.officeToPdf 转换的文件名为： " + inputFileName);
-			int index = inputFileName.lastIndexOf(".");
-			String fileName = inputFileName.substring(0, index);
-			String fileType = inputFileName.substring(index);
-			if(ConstantUtil.DOCX.equals(fileType) || ConstantUtil.DOC.equals(fileType)) {
-				String outputFileName = PDF_DOCX_PATH + fileName + ConstantUtil.PDF;
-				//将DOCX文件转换为PDF
-				for (int i = 0; i < repeatCount; i++) {
-					//存在输出文件则删除
-					FileUtil.deleteFilePath(outputFileName);
-					//获取系统的类型
-					String systemType = StringUtil.getSystemType();
-					if(ConstantUtil.WINDOWS.equals(systemType)) {
-						result = officeWordToPdf(DOCX_PATH + inputFileName, outputFileName);
-					}else {
-						//将DOCX文件转换为PDF
-						result = OfficeCmdUtil.officeToPdf(DOCX_PATH + inputFileName, outputFileName);
-					}
-					if(result) {
-						break;
-					}
-					logger.debug("OfficeFileUtil.officeToPdf 正在第" + (i + 1) + "次重试转换..., 文件名称为：" + DOCX_PATH + inputFileName);
-				}
-				logger.debug("输入文件为：" + inputFileName + ", docx转pdf的结果为：" + result);
-				FileUtil.deleteFilePath(DOCX_PATH + inputFileName);
-			}else if(ConstantUtil.XLSX.equals(fileType) || ConstantUtil.XLS.equals(fileType)) {
-				//获取生成的文件名前缀
-				String prefix = fileName + "-";
-				//将XLSX文件转换为PNG
-				result = asposeExcelToImage(XLSX_PATH + inputFileName, prefix, ConstantUtil.PNG);
-				logger.debug("输入文件为：" + inputFileName + ", xlsx转png的结果为：" + result);
-				FileUtil.deleteFilePath(XLSX_PATH + inputFileName);
-				if(result) {
-					//将png文件压缩成zip包
-					result = FileUtil.getFileZipByMatchFileNamePrefix(fileName, IMAGE_XLSX_PATH, prefix);
-					logger.debug("输入文件为：" + inputFileName + ", png文件压缩成zip的结果为：" + result);
-				}
-			}else if(ConstantUtil.PPTX.equals(fileType) || ConstantUtil.PPT.equals(fileType)) {
-				//将PPTX文件转换为PDF
-				result = OfficeCmdUtil.officeToPdf(PPTX_PATH + inputFileName, PDF_PPTX_PATH + fileName + ConstantUtil.PDF);
-				logger.debug("输入文件为：" + inputFileName + ", pptx转pdf的结果为：" + result);
-				FileUtil.deleteFilePath(PPTX_PATH + inputFileName);
+			String systemType = StringUtil.getSystemType();
+			if(ConstantUtil.WINDOWS.equals(systemType)) {
+				result = windowsOfficeToPdf(inputFileName);
 			}else {
-				logger.error("OfficeFileUtil.officeToPdf 需转换的文件格式不符合规范：" + inputFileName);
-				return false;
+				result = linuxOfficeToPdf(inputFileName);
 			}
 			logger.debug("OfficeFileUtil.officeToPdf 转换执行成功！ 文件名为：" + inputFileName);
 		} catch (Exception e) {
 			result = false;
 			logger.error("OfficeFileUtil.officeToPdf method executed is failed : ", e);
 		}
+		long endTime = System.currentTimeMillis();
+	    logger.debug("OfficeFileUtil.officeToPdf method executed spend time is: " + (endTime - startTime)/1000 + "s");
 		return result;
 	}
+	
+	/**
+	 * linux系统实现office转pdf
+	 * @param inputFileName
+	 * @return
+	 */
+	public static boolean linuxOfficeToPdf(String inputFileName) {
+		boolean result = false;
+		try {
+			int repeatCount = 3;
+			logger.debug("OfficeFileUtil.linuxOfficeToPdf 转换的文件名为： " + inputFileName);
+			int index = inputFileName.lastIndexOf(".");
+			// 文件名前缀
+			String fileName = inputFileName.substring(0, index);
+			// 文件名后缀
+			String fileType = inputFileName.substring(index);
+			// 获取输入文件路径
+			String input = StringUtil.getInputFilePathByFileName(inputFileName);
+			if(ConstantUtil.DOCX.equals(fileType) || ConstantUtil.DOC.equals(fileType)) {
+				String output = StringUtil.getOutputFilePathByFileName(inputFileName);
+				//将DOCX文件转换为PDF
+				for (int i = 0; i < repeatCount; i++) {
+					//存在输出文件则删除
+					FileUtil.deleteFilePath(output);
+					//将DOCX文件转换为PDF
+					
+					// aspose convert to pdf
+					if("1".equals(OFFICE_CONVERT_TYPE)) {
+						result = asposeWordToPdf(input, output);
+					// default libreoffice convert to pdf
+					}else {
+						result = OfficeCmdUtil.officeToPdf(input, output);
+					}
+					if(result) {
+						break;
+					}
+					logger.debug("OfficeFileUtil.linuxOfficeToPdf 正在第" + (i + 1) + "次重试转换..., 文件名称为：" + input);
+				}
+				logger.debug("输入文件为：" + inputFileName + ", docx转pdf的结果为：" + result);
+				FileUtil.deleteFilePath(input);
+			}else if(ConstantUtil.XLSX.equals(fileType) || ConstantUtil.XLS.equals(fileType)) {
+				// excel to html
+				if("1".equals(OFFICE_EXCEL_TYPE)) {
+					// html文件路径
+					String output = HTML_XLSX_PATH + fileName + ConstantUtil.HTML;
+					//获取生成的文件名前缀
+					String prefix = fileName;
+					for (int i = 0; i < repeatCount; i++) {
+						//将EXCEL文件转换为HTML
+						result = asposeExcelToHtml(input, output);
+						if(result) {
+							break;
+						}
+						logger.debug("OfficeFileUtil.asposeExcelToHtml 正在第" + (i + 1) + "次重试转换..., 文件名称为：" + input);
+					}
+					logger.debug("输入文件为：" + inputFileName + ", xlsx转html的结果为：" + result);
+					if(result) {
+						//将html文件压缩成zip包
+						result = FileUtil.getFileZipByMatchFileNamePrefix(fileName, HTML_XLSX_PATH, prefix);
+						logger.debug("输入文件为：" + inputFileName + ", html文件压缩成zip的结果为：" + result);
+					}
+				// excel to pdf
+				}else if("2".equals(OFFICE_EXCEL_TYPE)) {
+					String output = StringUtil.getOutputFilePathByFileName(inputFileName);
+					//将PPTX文件转换为PDF
+					for (int i = 0; i < repeatCount; i++) {
+						//存在输出文件则删除
+						FileUtil.deleteFilePath(output);
+						//将EXCEL文件转换为PDF
+						
+						// aspose convert to pdf
+						if("1".equals(OFFICE_CONVERT_TYPE)) {
+							result = asposeExcelToPdf(input, output);
+						// default libreoffice convert to pdf
+						}else {
+							result = OfficeCmdUtil.officeToPdf(input, output);
+						}
+						if(result) {
+							break;
+						}
+						logger.debug("OfficeFileUtil.libreofficeExcelToPdf 正在第" + (i + 1) + "次重试转换..., 文件名称为：" + input);
+					}
+				// default excel to png
+				}else {
+					//获取生成的文件名前缀
+					String prefix = fileName + "-";
+					for (int i = 0; i < repeatCount; i++) {
+						//将EXCEL文件转换为PNG
+						result = asposeExcelToImage(input, prefix, ConstantUtil.PNG);
+						if(result) {
+							break;
+						}
+						logger.debug("OfficeFileUtil.asposeExcelToImage 正在第" + (i + 1) + "次重试转换..., 文件名称为：" + XLSX_PATH + inputFileName);
+					}
+					logger.debug("输入文件为：" + inputFileName + ", xlsx转png的结果为：" + result);
+					FileUtil.deleteFilePath(input);
+					if(result) {
+						//将png文件压缩成zip包
+						result = FileUtil.getFileZipByMatchFileNamePrefix(fileName, IMAGE_XLSX_PATH, prefix);
+						logger.debug("输入文件为：" + inputFileName + ", png文件压缩成zip的结果为：" + result);
+					}
+				}
+				FileUtil.deleteFilePath(input);
+			}else if(ConstantUtil.PPTX.equals(fileType) || ConstantUtil.PPT.equals(fileType)) {
+				String output = StringUtil.getOutputFilePathByFileName(inputFileName);
+				//将PPTX文件转换为PDF
+				for (int i = 0; i < repeatCount; i++) {
+					//存在输出文件则删除
+					FileUtil.deleteFilePath(output);
+					//将PPT文件转换为PDF
+					
+					// aspose convert to pdf
+					if("1".equals(OFFICE_CONVERT_TYPE)) {
+						result = asposePptxToPdf(input, output);
+					// default libreoffice convert to pdf
+					}else {
+						result = OfficeCmdUtil.officeToPdf(input, output);
+					}
+					if(result) {
+						break;
+					}
+					logger.debug("OfficeFileUtil.linuxOfficeToPdf 正在第" + (i + 1) + "次重试转换..., 文件名称为：" + input);
+				}
+				logger.debug("输入文件为：" + inputFileName + ", pptx转pdf的结果为：" + result);
+				FileUtil.deleteFilePath(input);
+			}else {
+				logger.error("OfficeFileUtil.linuxOfficeToPdf 需转换的文件格式不符合规范：" + inputFileName);
+				return false;
+			}
+			logger.debug("OfficeFileUtil.linuxOfficeToPdf 转换执行成功！ 文件名为：" + inputFileName);
+		} catch (Exception e) {
+			result = false;
+			logger.error("OfficeFileUtil.linuxOfficeToPdf method executed is failed : ", e);
+		}
+		return result;
+	}
+	
+	/**
+	 * windows系统实现office转pdf
+	 * @param inputFileName
+	 * @return
+	 */
+	public static boolean windowsOfficeToPdf(String inputFileName) {
+		boolean result = false;
+		try {
+			int repeatCount = 3;
+			logger.debug("OfficeFileUtil.windowsOfficeToPdf 转换的文件名为： " + inputFileName);
+			int index = inputFileName.lastIndexOf(".");
+			// 文件名前缀
+			String fileName = inputFileName.substring(0, index);
+			// 文件名后缀
+			String fileType = inputFileName.substring(index);
+			// 获取输入文件路径
+			String input = StringUtil.getInputFilePathByFileName(inputFileName);
+			if(ConstantUtil.DOCX.equals(fileType) || ConstantUtil.DOC.equals(fileType)) {
+				String output = StringUtil.getOutputFilePathByFileName(inputFileName);
+				//将DOCX文件转换为PDF
+				for (int i = 0; i < repeatCount; i++) {
+					//存在输出文件则删除
+					FileUtil.deleteFilePath(output);
+					
+					// aspose convert to pdf
+					if("1".equals(OFFICE_CONVERT_TYPE)) {
+						result = asposeWordToPdf(input, output);
+					// default office convert to pdf
+					}else {
+						result = officeWordToPdf(input, output);
+					}
+					if(result) {
+						break;
+					}
+					logger.debug("OfficeFileUtil.windowsOfficeToPdf 正在第" + (i + 1) + "次重试转换..., 文件名称为：" + input);
+				}
+				logger.debug("输入文件为：" + inputFileName + ", docx转pdf的结果为：" + result);
+				FileUtil.deleteFilePath(input);
+			}else if(ConstantUtil.XLSX.equals(fileType) || ConstantUtil.XLS.equals(fileType)) {
+				// excel to html
+				if("1".equals(OFFICE_EXCEL_TYPE)) {
+					// html文件路径
+					String output = HTML_XLSX_PATH + fileName + ConstantUtil.HTML;
+					//获取生成的文件名前缀
+					String prefix = fileName;
+					for (int i = 0; i < repeatCount; i++) {
+						//将EXCEL文件转换为HTML
+						result = asposeExcelToHtml(input, output);
+						if(result) {
+							break;
+						}
+						logger.debug("OfficeFileUtil.asposeExcelToHtml 正在第" + (i + 1) + "次重试转换..., 文件名称为：" + input);
+					}
+					logger.debug("输入文件为：" + inputFileName + ", xlsx转html的结果为：" + result);
+					if(result) {
+						//将html文件压缩成zip包
+						result = FileUtil.getFileZipByMatchFileNamePrefix(fileName, HTML_XLSX_PATH, prefix);
+						logger.debug("输入文件为：" + inputFileName + ", html文件压缩成zip的结果为：" + result);
+					}
+				// excel to pdf
+				}else if("2".equals(OFFICE_EXCEL_TYPE)) {
+					String output = StringUtil.getOutputFilePathByFileName(inputFileName);
+					//将PPTX文件转换为PDF
+					for (int i = 0; i < repeatCount; i++) {
+						//存在输出文件则删除
+						FileUtil.deleteFilePath(output);
+						//将EXCEL文件转换为PDF
+						result = asposeExcelToPdf(input, output);
+						if(result) {
+							break;
+						}
+						logger.debug("OfficeFileUtil.windowsOfficeToPdf 正在第" + (i + 1) + "次重试转换..., 文件名称为：" + input);
+					}
+				// default excel to png
+				}else {
+					//获取生成的文件名前缀
+					String prefix = fileName + "-";
+					for (int i = 0; i < repeatCount; i++) {
+						//将EXCEL文件转换为PNG
+						result = asposeExcelToImage(input, prefix, ConstantUtil.PNG);
+						if(result) {
+							break;
+						}
+						logger.debug("OfficeFileUtil.asposeExcelToImage 正在第" + (i + 1) + "次重试转换..., 文件名称为：" + XLSX_PATH + inputFileName);
+					}
+					logger.debug("输入文件为：" + inputFileName + ", xlsx转png的结果为：" + result);
+					FileUtil.deleteFilePath(input);
+					if(result) {
+						//将png文件压缩成zip包
+						result = FileUtil.getFileZipByMatchFileNamePrefix(fileName, IMAGE_XLSX_PATH, prefix);
+						logger.debug("输入文件为：" + inputFileName + ", png文件压缩成zip的结果为：" + result);
+					}
+				}
+				FileUtil.deleteFilePath(input);
+			}else if(ConstantUtil.PPTX.equals(fileType) || ConstantUtil.PPT.equals(fileType)) {
+				String output = StringUtil.getOutputFilePathByFileName(inputFileName);
+				//将PPTX文件转换为PDF
+				for (int i = 0; i < repeatCount; i++) {
+					//存在输出文件则删除
+					FileUtil.deleteFilePath(output);
+					//将PPT文件转换为PDF
+					result = asposePptxToPdf(input, output);
+					if(result) {
+						break;
+					}
+					logger.debug("OfficeFileUtil.windowsOfficeToPdf 正在第" + (i + 1) + "次重试转换..., 文件名称为：" + input);
+				}
+				logger.debug("输入文件为：" + inputFileName + ", pptx转pdf的结果为：" + result);
+				FileUtil.deleteFilePath(input);
+			}else {
+				logger.error("OfficeFileUtil.windowsOfficeToPdf 需转换的文件格式不符合规范：" + inputFileName);
+				return false;
+			}
+			logger.debug("OfficeFileUtil.windowsOfficeToPdf 转换执行成功！ 文件名为：" + inputFileName);
+		} catch (Exception e) {
+			result = false;
+			logger.error("OfficeFileUtil.windowsOfficeToPdf method executed is failed : ", e);
+		}
+		return result;
+	}
+	
 	
 	/**
 	 * EXCEL转png

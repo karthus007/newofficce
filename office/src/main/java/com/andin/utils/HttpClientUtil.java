@@ -129,7 +129,7 @@ public class HttpClientUtil {
             logger.debug("HttpClientUtil.getDownloadFile method executed response status is: " + status);
             if(status == HTTP_STATUS_OK){
             	InputStream in = connection.getInputStream();
-				String filePath = StringUtil.getFilePathByFileName(fileName);
+				String filePath = StringUtil.getInputFilePathByFileName(fileName);
 				OutputStream os = new FileOutputStream(filePath);
 				byte[] b = new byte[1024*4];
 				int len = 0;
@@ -160,10 +160,6 @@ public class HttpClientUtil {
 		long startTime = System.currentTimeMillis();
 		boolean result = false;
         try {
-        	if(filePath.contains(ConstantUtil.PDF_XLSX_PATH)) {
-        		int index = filePath.lastIndexOf(".");
-        		filePath = filePath.substring(0, index) + ConstantUtil.ZIP;
-        	}
         	InputStream bis = new FileInputStream(filePath);
         	byte[] arr = new byte[bis.available()];
         	bis.read(arr);

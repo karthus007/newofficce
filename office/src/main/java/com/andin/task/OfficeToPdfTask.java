@@ -41,6 +41,7 @@ public class OfficeToPdfTask {
 		if(CommonUtil.LICENSE_STATUS) {
 			logger.debug("OfficeToPdfTask.getOfficeTaskListToPdf method executed is start...");
 			int tcount = ((ThreadPoolExecutor) pool).getActiveCount();
+			tcount = 100;
 			if(tcount < TASK_THREAD_COUNT) {
 				TaskThread thread = new TaskThread();
 				pool.execute(thread);	
@@ -70,16 +71,17 @@ public class OfficeToPdfTask {
 				logger.debug("OfficeToPdfTask.getOfficeTaskListToPdf method task params is: " + task.toString());
 				String taskId = task.getId();
 				String name = task.getFilename();
-				String fileType = StringUtil.getFileTypeByType(task.getFiletype());
-				String fileName = name + fileType;
+				// 文件类型
+				String type = StringUtil.getFileTypeByType(task.getFiletype());
+				String fileName = name + type;
 				//通过文件ID从PHP下载文件
 				downloadResult = HttpClientUtil.downloadFile(taskId, fileName);
 				if(downloadResult) {
-					//开始OFFICE转换PDF, excel转html
+					//开始OFFICE转换PDF, excel转html or png or pdf
 					officeToPdfResult = OfficeFileUtil.officeToPdf(fileName);
 					if(officeToPdfResult) {
 						//通过文件名获取转换好的PDF文件的路径, EXCEL为html路径
-						String filePath = StringUtil.getPdfFilePathByFileName(fileName, name);
+						String filePath = StringUtil.getOutputFilePathByFileName(fileName);
 						//上传文件到PHP
 						uploadResult = HttpClientUtil.uploadFile(taskId, filePath);
 						if(uploadResult) {

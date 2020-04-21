@@ -33,8 +33,7 @@
 	  <div class="col-lg-1">
 	    <div class="input-group">
 	      <span style="display: flex;">
-	      	<input type="text" value="" class="form-control" style="width:20vw;display:inline" id="pdf" placeholder="请输入下载的文件名" >
-	      	<input type="text" value="" class="form-control" style="width:10vw;display:inline" id="type" placeholder="请输入源文件类型" >
+	      	<input type="text" value="" class="form-control" style="width: 30vw;display:inline" id="pdf" placeholder="请输入下载的文件名" >
 	      </span>
 	      <span class="input-group-btn">
 	      	<button class="btn btn-default" type="button" onclick="pdf();" style="width: 150px;">下载PDF文件</button>
@@ -64,14 +63,7 @@
             success: function (res) {
                 if(res.resultCode == "0000"){
                 	$("#conversion").val(name);
-                	var index = name.lastIndexOf(".");
-                	var type = name.substring(name.lastIndexOf(".")+1);
-                	if(type=="xlsx" || type=="xls"){
-                		$("#pdf").val(name.substring(0, index) + ".zip");
-                	}else{
-                		$("#pdf").val(name.substring(0, index) + ".pdf");
-                	}
-                	$("#type").val(type);
+                	$("#pdf").val(name);
                 	alert("上传成功");
                 }else{
                 	alert("上传失败");
@@ -82,7 +74,7 @@
 	
 	function conversion(){
 		var name = $("#conversion").val();
-		if(name == "" || type == null){
+		if(name == "" || name == null){
 			alert("请填写需转换的文件名");
 			return;
 		}
@@ -104,12 +96,11 @@
 	
 	function pdf(){
 		var name = $("#pdf").val();
-		var type = $("#type").val();
-		if(name == "" || type == null){
-			alert("请填写下载的文件名和源文件的类型");
+		if(name == "" || name == null){
+			alert("请填写下载的文件名");
 			return;
 		}
-		var url = "./office/download?name=" + name + "&type=" + type;
+		var url = "./office/download?name=" + name;
 		location.href = encodeURI(encodeURI(url));
 	}
 </script>
