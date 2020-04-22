@@ -85,8 +85,6 @@ public class StringUtil {
 	 */
 	public static String getInputFilePathByFileName(String fileName) {
 		int index = fileName.lastIndexOf(".");
-		// 文件名前缀
-		String name = fileName.substring(0, index);
 		// 文件名后缀
 		String type = fileName.substring(index);
 		StringBuffer path = new StringBuffer();
@@ -100,7 +98,7 @@ public class StringUtil {
 		}else if(type.equals(ConstantUtil.PDF)) {
 			path.append(ConstantUtil.PDF_PDF_PATH);
 		}
-		path.append(name);
+		path.append(fileName);
 		return path.toString();
 	}
 	
