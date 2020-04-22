@@ -125,9 +125,9 @@ public class OfficeFileUtil {
 					}
 				// default excel to png
 				}else {
+					//将EXCEL文件转换为PNG
+					String output = StringUtil.getOutputFilePathByFileName(fileName + ConstantUtil.PNG);
 					for (int i = 0; i < repeatCount; i++) {
-						//将EXCEL文件转换为PNG
-						String output = StringUtil.getOutputFilePathByFileName(fileName + ConstantUtil.PNG);
 						//将EXCEL文件转换为PNG
 						result = OfficeUtil.asposeExcelToImage(input, output);
 						if(result) {
@@ -152,8 +152,6 @@ public class OfficeFileUtil {
 				for (int i = 0; i < repeatCount; i++) {
 					//存在输出文件则删除
 					FileUtil.deleteFilePath(output);
-					//将PPT文件转换为PDF
-					
 					// aspose convert to pdf
 					if(ConstantUtil.ASPOSE_CONVERT_TYPE.equals(OFFICE_CONVERT_TYPE)) {
 						result = OfficeUtil.asposePptxToPdf(input, output);
@@ -255,8 +253,8 @@ public class OfficeFileUtil {
 					}
 				// default excel to png
 				}else {
+					String output = StringUtil.getOutputFilePathByFileName(fileName + ConstantUtil.PNG);
 					for (int i = 0; i < repeatCount; i++) {
-						String output = StringUtil.getOutputFilePathByFileName(fileName + ConstantUtil.PNG);
 						//将EXCEL文件转换为PNG
 						result = OfficeUtil.asposeExcelToImage(input, output);
 						if(result) {
