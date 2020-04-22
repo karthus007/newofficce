@@ -10,8 +10,6 @@ public class OfficeFileUtil {
     private static final String OFFICE_EXCEL_TYPE = PropertiesUtil.getProperties("office.excel.type", null);
     
     private static final String OFFICE_CONVERT_TYPE = PropertiesUtil.getProperties("office.convert.type", null);
-	
-	private final static String XLSX_PATH = StringUtil.getUploadFilePath() + ConstantUtil.XLSX_PATH;
 
 	private final static String IMAGE_XLSX_PATH = StringUtil.getUploadFilePath() + ConstantUtil.PDF_XLSX_PATH;
 	
@@ -77,7 +75,7 @@ public class OfficeFileUtil {
 					if(result) {
 						break;
 					}
-					logger.debug("OfficeFileUtil.linuxOfficeToPdf 正在第" + (i + 1) + "次重试转换..., 文件名称为：" + input);
+					logger.debug("OfficeFileUtil.linuxWordToPdf 正在第" + (i + 1) + "次重试转换..., 文件名称为：" + input);
 				}
 				logger.debug("输入文件为：" + inputFileName + ", docx转pdf的结果为：" + result);
 				FileUtil.deleteFilePath(input);
@@ -105,11 +103,10 @@ public class OfficeFileUtil {
 				// excel to pdf
 				}else if(ConstantUtil.OFFICE_EXCEL_TO_PDF.equals(OFFICE_EXCEL_TYPE)) {
 					String output = StringUtil.getOutputFilePathByFileName(inputFileName);
-					//将PPTX文件转换为PDF
+					//将EXCEL文件转换为PDF
 					for (int i = 0; i < repeatCount; i++) {
 						//存在输出文件则删除
 						FileUtil.deleteFilePath(output);
-						//将EXCEL文件转换为PDF
 						
 						// aspose convert to pdf
 						if(ConstantUtil.ASPOSE_CONVERT_TYPE.equals(OFFICE_CONVERT_TYPE)) {
@@ -121,7 +118,7 @@ public class OfficeFileUtil {
 						if(result) {
 							break;
 						}
-						logger.debug("OfficeFileUtil.libreofficeExcelToPdf 正在第" + (i + 1) + "次重试转换..., 文件名称为：" + input);
+						logger.debug("OfficeFileUtil.linuxExcelToPdf 正在第" + (i + 1) + "次重试转换..., 文件名称为：" + input);
 					}
 				// default excel to png
 				}else {
@@ -133,7 +130,7 @@ public class OfficeFileUtil {
 						if(result) {
 							break;
 						}
-						logger.debug("OfficeFileUtil.asposeExcelToImage 正在第" + (i + 1) + "次重试转换..., 文件名称为：" + XLSX_PATH + inputFileName);
+						logger.debug("OfficeFileUtil.asposeExcelToImage 正在第" + (i + 1) + "次重试转换..., 文件名称为：" + input);
 					}
 					logger.debug("输入文件为：" + inputFileName + ", xlsx转png的结果为：" + result);
 					FileUtil.deleteFilePath(input);
@@ -162,7 +159,7 @@ public class OfficeFileUtil {
 					if(result) {
 						break;
 					}
-					logger.debug("OfficeFileUtil.linuxOfficeToPdf 正在第" + (i + 1) + "次重试转换..., 文件名称为：" + input);
+					logger.debug("OfficeFileUtil.linuxPPTToPdf 正在第" + (i + 1) + "次重试转换..., 文件名称为：" + input);
 				}
 				logger.debug("输入文件为：" + inputFileName + ", pptx转pdf的结果为：" + result);
 				FileUtil.deleteFilePath(input);
@@ -212,7 +209,7 @@ public class OfficeFileUtil {
 					if(result) {
 						break;
 					}
-					logger.debug("OfficeFileUtil.windowsOfficeToPdf 正在第" + (i + 1) + "次重试转换..., 文件名称为：" + input);
+					logger.debug("OfficeFileUtil.windowsWordToPdf 正在第" + (i + 1) + "次重试转换..., 文件名称为：" + input);
 				}
 				logger.debug("输入文件为：" + inputFileName + ", docx转pdf的结果为：" + result);
 				FileUtil.deleteFilePath(input);
@@ -240,16 +237,16 @@ public class OfficeFileUtil {
 				// excel to pdf
 				}else if(ConstantUtil.OFFICE_EXCEL_TO_PDF.equals(OFFICE_EXCEL_TYPE)) {
 					String output = StringUtil.getOutputFilePathByFileName(inputFileName);
-					//将PPTX文件转换为PDF
+					//将EXCEL文件转换为PDF
 					for (int i = 0; i < repeatCount; i++) {
 						//存在输出文件则删除
 						FileUtil.deleteFilePath(output);
-						//将EXCEL文件转换为PDF
+
 						result = OfficeUtil.asposeExcelToPdf(input, output);
 						if(result) {
 							break;
 						}
-						logger.debug("OfficeFileUtil.windowsOfficeToPdf 正在第" + (i + 1) + "次重试转换..., 文件名称为：" + input);
+						logger.debug("OfficeFileUtil.windowsExcelToPdf 正在第" + (i + 1) + "次重试转换..., 文件名称为：" + input);
 					}
 				// default excel to png
 				}else {
@@ -260,7 +257,7 @@ public class OfficeFileUtil {
 						if(result) {
 							break;
 						}
-						logger.debug("OfficeFileUtil.asposeExcelToImage 正在第" + (i + 1) + "次重试转换..., 文件名称为：" + XLSX_PATH + inputFileName);
+						logger.debug("OfficeFileUtil.asposeExcelToImage 正在第" + (i + 1) + "次重试转换..., 文件名称为：" + input);
 					}
 					logger.debug("输入文件为：" + inputFileName + ", xlsx转png的结果为：" + result);
 					FileUtil.deleteFilePath(input);
@@ -284,7 +281,7 @@ public class OfficeFileUtil {
 					if(result) {
 						break;
 					}
-					logger.debug("OfficeFileUtil.windowsOfficeToPdf 正在第" + (i + 1) + "次重试转换..., 文件名称为：" + input);
+					logger.debug("OfficeFileUtil.windowsPPTToPdf 正在第" + (i + 1) + "次重试转换..., 文件名称为：" + input);
 				}
 				logger.debug("输入文件为：" + inputFileName + ", pptx转pdf的结果为：" + result);
 				FileUtil.deleteFilePath(input);
