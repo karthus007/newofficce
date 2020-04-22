@@ -38,8 +38,6 @@ public class OfficeUtil {
 	// DOC转DOCX
 	private static final int DOC_FORMAT_DOCX = 12;
 	
-	private final static String IMAGE_XLSX_PATH = StringUtil.getUploadFilePath() + ConstantUtil.PDF_XLSX_PATH;
-	
 	/**
 	 * EXCEL转png
 	 * @param inputFileName d:/app/a.xlsx
@@ -47,10 +45,15 @@ public class OfficeUtil {
 	 * @param type .png
 	 * @return
 	 */
-	public static boolean asposeExcelToImage(String inputFileName, String fileName, String type){
+	public static boolean asposeExcelToImage(String inputFileName, String outputFileName){
 		boolean result = false;
 		try {
-			String outputFileName = IMAGE_XLSX_PATH + fileName + "-";
+			int index = outputFileName.lastIndexOf(".");
+			// 文件名前缀
+			String name = outputFileName.substring(0, index);
+			// 文件名后缀
+			String type = outputFileName.substring(index);
+			
 			byte[] bytes = ConstantUtil.ASPOSE_WORD_LICENSE.getBytes("UTF-8");
 			InputStream in =  new ByteArrayInputStream(bytes);
 			com.aspose.cells.License asposeLic = new com.aspose.cells.License();
@@ -90,7 +93,7 @@ public class OfficeUtil {
                 //sheet.getPageSetup().setBottomMargin(0);
                 //sheet.getPageSetup().setTopMargin(0);
                 SheetRender render = new SheetRender(sheet, imgOptions);
-                render.toImage(0,  outputFileName + (i+1) + type);
+                render.toImage(0,  name + "-" + (i+1) + type);
                 
 			}
 			in.close();
@@ -366,7 +369,7 @@ public class OfficeUtil {
     }
     
     public static void main(String[] args) {
-		officeWordToPdf("d:/app/test.docx", "d:/app/test.pdf");
+    	asposeExcelToImage("d:/app/test.xlsx", "d:/app/test.png");
 	}
 
 }

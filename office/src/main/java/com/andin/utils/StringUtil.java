@@ -142,6 +142,14 @@ public class StringUtil {
 			path.append(ConstantUtil.PDF_PDF_PATH);
 			path.append(name);
 			path.append(ConstantUtil.PDF);
+		}else if(type.equals(ConstantUtil.PNG)) {
+			path.append(ConstantUtil.PDF_XLSX_PATH);
+			path.append(name);
+			path.append(ConstantUtil.PNG);
+		}else if(type.equals(ConstantUtil.HTML)) {
+			path.append(ConstantUtil.HTML_XLSX_PATH);
+			path.append(name);
+			path.append(ConstantUtil.HTML);
 		}
 		return path.toString();
 	}

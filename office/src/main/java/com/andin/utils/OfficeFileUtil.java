@@ -85,9 +85,7 @@ public class OfficeFileUtil {
 				// excel to html
 				if(ConstantUtil.OFFICE_EXCEL_TO_HTML.equals(OFFICE_EXCEL_TYPE)) {
 					// html文件路径
-					String output = HTML_XLSX_PATH + fileName + ConstantUtil.HTML;
-					//获取生成的文件名前缀
-					String prefix = fileName;
+					String output = StringUtil.getOutputFilePathByFileName(fileName + ConstantUtil.HTML);
 					for (int i = 0; i < repeatCount; i++) {
 						//将EXCEL文件转换为HTML
 						result = OfficeUtil.asposeExcelToHtml(input, output);
@@ -98,6 +96,8 @@ public class OfficeFileUtil {
 					}
 					logger.debug("输入文件为：" + inputFileName + ", xlsx转html的结果为：" + result);
 					if(result) {
+						//获取生成的文件名前缀
+						String prefix = fileName;
 						//将html文件压缩成zip包
 						result = FileUtil.getFileZipByMatchFileNamePrefix(fileName, HTML_XLSX_PATH, prefix);
 						logger.debug("输入文件为：" + inputFileName + ", html文件压缩成zip的结果为：" + result);
@@ -125,11 +125,11 @@ public class OfficeFileUtil {
 					}
 				// default excel to png
 				}else {
-					//获取生成的文件名前缀
-					String prefix = fileName + "-";
 					for (int i = 0; i < repeatCount; i++) {
 						//将EXCEL文件转换为PNG
-						result = OfficeUtil.asposeExcelToImage(input, prefix, ConstantUtil.PNG);
+						String output = StringUtil.getOutputFilePathByFileName(fileName + ConstantUtil.PNG);
+						//将EXCEL文件转换为PNG
+						result = OfficeUtil.asposeExcelToImage(input, output);
 						if(result) {
 							break;
 						}
@@ -138,6 +138,8 @@ public class OfficeFileUtil {
 					logger.debug("输入文件为：" + inputFileName + ", xlsx转png的结果为：" + result);
 					FileUtil.deleteFilePath(input);
 					if(result) {
+						//获取生成的文件名前缀
+						String prefix = fileName + "-";
 						//将png文件压缩成zip包
 						result = FileUtil.getFileZipByMatchFileNamePrefix(fileName, IMAGE_XLSX_PATH, prefix);
 						logger.debug("输入文件为：" + inputFileName + ", png文件压缩成zip的结果为：" + result);
@@ -220,9 +222,7 @@ public class OfficeFileUtil {
 				// excel to html
 				if(ConstantUtil.OFFICE_EXCEL_TO_HTML.equals(OFFICE_EXCEL_TYPE)) {
 					// html文件路径
-					String output = HTML_XLSX_PATH + fileName + ConstantUtil.HTML;
-					//获取生成的文件名前缀
-					String prefix = fileName;
+					String output = StringUtil.getOutputFilePathByFileName(fileName + ConstantUtil.HTML);
 					for (int i = 0; i < repeatCount; i++) {
 						//将EXCEL文件转换为HTML
 						result = OfficeUtil.asposeExcelToHtml(input, output);
@@ -233,6 +233,8 @@ public class OfficeFileUtil {
 					}
 					logger.debug("输入文件为：" + inputFileName + ", xlsx转html的结果为：" + result);
 					if(result) {
+						//获取生成的文件名前缀
+						String prefix = fileName;
 						//将html文件压缩成zip包
 						result = FileUtil.getFileZipByMatchFileNamePrefix(fileName, HTML_XLSX_PATH, prefix);
 						logger.debug("输入文件为：" + inputFileName + ", html文件压缩成zip的结果为：" + result);
@@ -253,11 +255,10 @@ public class OfficeFileUtil {
 					}
 				// default excel to png
 				}else {
-					//获取生成的文件名前缀
-					String prefix = fileName + "-";
 					for (int i = 0; i < repeatCount; i++) {
+						String output = StringUtil.getOutputFilePathByFileName(fileName + ConstantUtil.PNG);
 						//将EXCEL文件转换为PNG
-						result = OfficeUtil.asposeExcelToImage(input, prefix, ConstantUtil.PNG);
+						result = OfficeUtil.asposeExcelToImage(input, output);
 						if(result) {
 							break;
 						}
@@ -266,6 +267,8 @@ public class OfficeFileUtil {
 					logger.debug("输入文件为：" + inputFileName + ", xlsx转png的结果为：" + result);
 					FileUtil.deleteFilePath(input);
 					if(result) {
+						//获取生成的文件名前缀
+						String prefix = fileName + "-";
 						//将png文件压缩成zip包
 						result = FileUtil.getFileZipByMatchFileNamePrefix(fileName, IMAGE_XLSX_PATH, prefix);
 						logger.debug("输入文件为：" + inputFileName + ", png文件压缩成zip的结果为：" + result);
