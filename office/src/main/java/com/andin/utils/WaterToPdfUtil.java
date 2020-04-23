@@ -21,6 +21,8 @@ import com.itextpdf.text.pdf.PdfWriter;
 public class WaterToPdfUtil {
 
     private static Logger logger = LoggerFactory.getLogger(WaterToPdfUtil.class);
+    
+	private static final String ADMIN_PASS = PropertiesUtil.getProperties("office.pass", null);
 	
 	public static final String WATER_FONT_PATH = StringUtil.getUploadFilePath() + ConstantUtil.WATER_FONT_PATH;
 	
@@ -53,9 +55,10 @@ public class WaterToPdfUtil {
         	PdfStamper pdfStamper = new PdfStamper(pdfReader, outputStream);
         	PdfContentByte waterMarkContent;
             BaseFont bf = BaseFont.createFont(WATER_FONT_PATH, BaseFont.IDENTITY_H, BaseFont.NOT_EMBEDDED);
-            if(!StringUtil.isEmpty(WATER_PASS)) {
-            	byte[] bytes = WATER_PASS.getBytes();
-            	pdfStamper.setEncryption(bytes, bytes, PdfWriter.ALLOW_MODIFY_CONTENTS, false);
+            if(StringUtil.isEmpty(WATER_PASS)) {
+            	pdfStamper.setEncryption(null, ADMIN_PASS.getBytes(), PdfWriter.ALLOW_MODIFY_ANNOTATIONS, false);
+            }else {
+            	pdfStamper.setEncryption(WATER_PASS.getBytes(), ADMIN_PASS.getBytes(), PdfWriter.ALLOW_MODIFY_ANNOTATIONS, false);
             }            
             PdfLayer layer = new PdfLayer(WATERMARK, pdfStamper.getWriter());
             for (int i = 1; i <= numberOfPages; i++){

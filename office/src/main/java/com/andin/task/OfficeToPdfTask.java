@@ -41,7 +41,6 @@ public class OfficeToPdfTask {
 		if(CommonUtil.LICENSE_STATUS) {
 			logger.debug("OfficeToPdfTask.getOfficeTaskListToPdf method executed is start...");
 			int tcount = ((ThreadPoolExecutor) pool).getActiveCount();
-			tcount = 100;
 			if(tcount < TASK_THREAD_COUNT) {
 				TaskThread thread = new TaskThread();
 				pool.execute(thread);	
