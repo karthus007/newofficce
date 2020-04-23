@@ -43,12 +43,6 @@ public class OfficeController {
     private static Logger logger = LoggerFactory.getLogger(OfficeController.class);
     
     private static ExecutorService pool = Executors.newSingleThreadExecutor();
-    
-	private final static String PDF_DOCX_PATH = StringUtil.getUploadFilePath() + ConstantUtil.PDF_DOCX_PATH;
-	
-	private final static String PDF_XLSX_PATH = StringUtil.getUploadFilePath() + ConstantUtil.PDF_XLSX_PATH;
-	
-	private final static String PDF_PPTX_PATH = StringUtil.getUploadFilePath() + ConstantUtil.PDF_PPTX_PATH;
 
 	@Resource
 	private OfficeService officeService;
@@ -67,35 +61,15 @@ public class OfficeController {
 			String head = req.getParameter("head") != null ? req.getParameter("head") : "";
 			String handler = req.getParameter("handler") != null ? req.getParameter("handler") : "";
 			WaterModel water = new WaterModel(handler, head, pass, com, id);
-			StringBuffer path = new StringBuffer();
-			path.append(StringUtil.getUploadFilePath());
+			
 			String fileName = part.getSubmittedFileName();
-			int index = fileName.lastIndexOf(".");
-			String lastFileName = fileName.substring(0, index);
-			String outputFilePath = null;
-			String officeInputFilePath = null;
 			logger.debug("OfficeController.pdfToWater fileName is: " + fileName);
-			if(fileName.endsWith(ConstantUtil.PDF)) {
-				path.append(ConstantUtil.PDF_PDF_PATH);
-				outputFilePath = path.toString() + ConstantUtil.WATER_PATH + fileName;
-			}else if(fileName.endsWith(ConstantUtil.DOC) || fileName.endsWith(ConstantUtil.DOCX)) {
-				path.append(ConstantUtil.DOCX_PATH);
-				officeInputFilePath = PDF_DOCX_PATH + lastFileName + ConstantUtil.PDF;
-				outputFilePath = PDF_DOCX_PATH  + ConstantUtil.WATER_PATH + lastFileName + ConstantUtil.PDF;
-			}else if(fileName.endsWith(ConstantUtil.XLS) || fileName.endsWith(ConstantUtil.XLSX)) {
-				path.append(ConstantUtil.XLSX_PATH);
-				officeInputFilePath = PDF_XLSX_PATH + lastFileName + ConstantUtil.PDF;
-				outputFilePath = PDF_XLSX_PATH + ConstantUtil.WATER_PATH + lastFileName + ConstantUtil.PDF;
-			}else if(fileName.endsWith(ConstantUtil.PPT) || fileName.endsWith(ConstantUtil.PPTX)) {
-				path.append(ConstantUtil.PPTX_PATH);
-				officeInputFilePath = PDF_PPTX_PATH + lastFileName + ConstantUtil.PDF;
-				outputFilePath = PDF_PPTX_PATH + ConstantUtil.WATER_PATH + lastFileName + ConstantUtil.PDF;
-			}else {
-				map.put(ConstantUtil.RESULT_CODE, ConstantUtil.UPLOAD_FILE_TYPE_ERROR_CODE);
-				map.put(ConstantUtil.RESULT_MSG, ConstantUtil.UPLOAD_FILE_TYPE_ERROR_MSG);
-				return map;
-			}
-			String inputFilePath = path.toString() + fileName;
+			
+			// 获取文件的存储路径
+			String inputFilePath = StringUtil.getInputFilePathByFileName(fileName);
+			// 获取生成水印后的文件存储路径
+			String outputFilePath = StringUtil.getWaterOutputFilePathByFileName(fileName);
+			
 			InputStream in = part.getInputStream();
 			byte[] b = new byte[1024*4];
 			int len = 0;
@@ -106,15 +80,20 @@ public class OfficeController {
 			in.close();
 			os.close();
 			boolean result = false;
+			
 			// 非PDF文件执行PDF任务转换, 生成水印文件
-			if(!fileName.endsWith(ConstantUtil.PDF)) {
+			if(fileName.endsWith(ConstantUtil.PDF)) {
+				result = WaterToPdfUtil.pdfToWater(inputFilePath, outputFilePath, water);
+			}else {
+				// 获取水印文件输入存储路径
+				String officeInputFilePath = StringUtil.getWaterInputFilePathByFileName(fileName);
 				Future<Boolean> task = pool.submit(new OfficeThread(fileName));
 				if(task.get()) {
 					result = WaterToPdfUtil.pdfToWater(officeInputFilePath, outputFilePath, water);
+					FileUtil.deleteFilePath(officeInputFilePath);
 				}
-			}else {
-				result = WaterToPdfUtil.pdfToWater(inputFilePath, outputFilePath, water);
 			}
+			
 			if(result) {
 				InputStream bin = new FileInputStream(outputFilePath);
 				bytes = new byte[bin.available()];
@@ -127,6 +106,7 @@ public class OfficeController {
 				map.put(ConstantUtil.RESULT_CODE, ConstantUtil.PDF_TO_WATER_ERROR_CODE);
 				map.put(ConstantUtil.RESULT_MSG, ConstantUtil.PDF_TO_WATER_ERROR_MSG);
 			}
+			
 			FileUtil.deleteFilePath(inputFilePath);
 			FileUtil.deleteFilePath(outputFilePath);
 			logger.debug("OfficeController.pdfToWater method execute is successful...");			

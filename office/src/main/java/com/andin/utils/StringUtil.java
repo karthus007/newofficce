@@ -24,34 +24,6 @@ public class StringUtil {
 	
     private static final String RANDOM_INFO = "abcdefghijklmnopqrstuvwxyz0123456789";
 	
-    
-	/**
-	  * 根据长度生成指定的字符串
-	 * @param length
-	 * @return
-	 */
-	public static String getRandomString(int length){
-	    Random random = new Random();
-	    StringBuffer sb = new StringBuffer();
-	    for(int i=0; i<length; i++){
-	      int number = random.nextInt(36);
-	      sb.append(RANDOM_INFO.charAt(number));
-	    }
-	    return sb.toString();
-	}
-    
-	/**
-	  * 判断字符串是否为空
-	 * @param name
-	 * @return
-	 */
-	public static boolean isEmpty(String name){
-		boolean result = false;
-		if(name == null || name == "" || name == "null" || name.trim().length() == 0) {
-			result = true;
-		}
-		return result;
-	}
 	
 	/**
 	 * 获取项目的根路径
@@ -155,6 +127,61 @@ public class StringUtil {
 	}
 	
 	/**
+	 * 通过文件名获取水印输入文件的存储路径
+	 * @param fileName
+	 * @return
+	 */
+	public static String getWaterInputFilePathByFileName(String fileName) {
+		int index = fileName.lastIndexOf(".");
+		// 文件名前缀
+		String name = fileName.substring(0, index);
+		// 文件名后缀
+		String type = fileName.substring(index);
+		StringBuffer path = new StringBuffer();
+		path.append(getUploadFilePath());
+		if(type.equals(ConstantUtil.DOC) || type.equals(ConstantUtil.DOCX)) {
+			path.append(ConstantUtil.PDF_DOCX_PATH);
+		}else if(type.equals(ConstantUtil.XLS) || type.equals(ConstantUtil.XLSX)) {
+			path.append(ConstantUtil.PDF_XLSX_PATH);
+		}else if(type.equals(ConstantUtil.PPT) || type.equals(ConstantUtil.PPTX)) {
+			path.append(ConstantUtil.PDF_PPTX_PATH);
+		}else{
+			path.append(ConstantUtil.PDF_PDF_PATH);
+		}
+		path.append(name);
+		path.append(ConstantUtil.PDF);
+		return path.toString();
+	}
+	
+	/**
+	 * 通过文件名获取水印输出文件的存储路径
+	 * @param fileName
+	 * @return
+	 */
+	public static String getWaterOutputFilePathByFileName(String fileName) {
+		int index = fileName.lastIndexOf(".");
+		// 文件名前缀
+		String name = fileName.substring(0, index);
+		// 文件名后缀
+		String type = fileName.substring(index);
+		StringBuffer path = new StringBuffer();
+		path.append(getUploadFilePath());
+		if(type.equals(ConstantUtil.DOC) || type.equals(ConstantUtil.DOCX)) {
+			path.append(ConstantUtil.PDF_DOCX_PATH);
+		}else if(type.equals(ConstantUtil.XLS) || type.equals(ConstantUtil.XLSX)) {
+			path.append(ConstantUtil.PDF_XLSX_PATH);
+		}else if(type.equals(ConstantUtil.PPT) || type.equals(ConstantUtil.PPTX)) {
+			path.append(ConstantUtil.PDF_PPTX_PATH);
+		}else{
+			path.append(ConstantUtil.PDF_PDF_PATH);
+		}
+		path.append(ConstantUtil.WATER_PATH);
+		path.append(name);
+		path.append(ConstantUtil.PDF);
+		return path.toString();
+	}
+	
+	/**
 	 * 通过类型获取文件名的后缀
 	 * @param type
 	 * @return
@@ -179,6 +206,34 @@ public class StringUtil {
 			break;
 		}
 		return fileType;
+	}
+    
+	/**
+	  * 根据长度生成指定的字符串
+	 * @param length
+	 * @return
+	 */
+	public static String getRandomString(int length){
+	    Random random = new Random();
+	    StringBuffer sb = new StringBuffer();
+	    for(int i=0; i<length; i++){
+	      int number = random.nextInt(36);
+	      sb.append(RANDOM_INFO.charAt(number));
+	    }
+	    return sb.toString();
+	}
+    
+	/**
+	  * 判断字符串是否为空
+	 * @param name
+	 * @return
+	 */
+	public static boolean isEmpty(String name){
+		boolean result = false;
+		if(name == null || name == "" || name == "null" || name.trim().length() == 0) {
+			result = true;
+		}
+		return result;
 	}
 	
 	/**
