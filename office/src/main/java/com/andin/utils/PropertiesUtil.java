@@ -32,7 +32,7 @@ public class PropertiesUtil {
 		InputStream stream = null;
 		try {
 			//获取系统的类型
-			String systemType = StringUtil.getSystemType();
+			String systemType = getSystemType();
 			if(ConstantUtil.WINDOWS.equals(systemType)) {
 				// windows config
 				File cfile = new File(WINDOWS_C_APP_CONFIG_PATH + CONFIG_FILE_PATH);
@@ -83,6 +83,19 @@ public class PropertiesUtil {
 		}else {
 			return result;			
 		}
+	}
+	
+	/**
+	 * 获取系统的类型
+	 * @return
+	 */
+	public static String getSystemType() {
+		String type = ConstantUtil.LINUX;
+		String name = System.getProperty("os.name").toLowerCase();
+		if(name.contains(ConstantUtil.WINDOWS)) {
+			type = ConstantUtil.WINDOWS;
+		}
+		return type;
 	}
 
 	public static void main(String[] args) {
