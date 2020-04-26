@@ -34,6 +34,7 @@ public class WaterToPdfUtil {
 	/* --- 水印的文件颜色 ---  */
 	public static final BaseColor WATER_COLOR = BaseColor.GRAY;
 	
+	
     /**
           * 给PDF文件添加水印
      * @param inputFilePath /app/file/1.pdf
@@ -56,9 +57,9 @@ public class WaterToPdfUtil {
         	PdfContentByte waterMarkContent;
             BaseFont bf = BaseFont.createFont(WATER_FONT_PATH, BaseFont.IDENTITY_H, BaseFont.NOT_EMBEDDED);
             if(StringUtil.isEmpty(WATER_PASS)) {
-            	pdfStamper.setEncryption(null, ADMIN_PASS.getBytes(), PdfWriter.ALLOW_MODIFY_ANNOTATIONS, false);
+            	pdfStamper.setEncryption(null, ADMIN_PASS.getBytes(), PdfWriter.ALLOW_PRINTING, false);
             }else {
-            	pdfStamper.setEncryption(WATER_PASS.getBytes(), ADMIN_PASS.getBytes(), PdfWriter.ALLOW_MODIFY_ANNOTATIONS, false);
+            	pdfStamper.setEncryption(WATER_PASS.getBytes(), ADMIN_PASS.getBytes(), PdfWriter.ALLOW_PRINTING, false);
             }            
             PdfLayer layer = new PdfLayer(WATERMARK, pdfStamper.getWriter());
             for (int i = 1; i <= numberOfPages; i++){
